@@ -36,11 +36,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # modules
+    'estaciones.apps.EstacionesConfig',
+    # dependencies
+    'import_export',
+    'graphene_django',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -130,6 +137,21 @@ else:
     STATIC_URL = '/static/'
 
 STATIC_ROOT = 'static/'
+
+# IMPORT_EXPORT_USE_TRANSACTIONS = True
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+
+GRAPHENE = {
+    'SCHEMA': 'smuofertas.schema.schema'
+}
+
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = (
+#     'google.com',
+#     'hostname.example.com',
+#     'localhost:8000',
+#     '127.0.0.1:9000'
+# )
 
 try:
     from local_settings import *
