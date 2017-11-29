@@ -24,7 +24,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS')]
+ALLOWED_HOSTS = [os.getenv('SERVER_HOSTS')]
 
 
 # Application definition
@@ -147,10 +147,9 @@ GRAPHENE = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ORIGIN_WHITELIST = (
-#     'google.com',
-#     'hostname.example.com',
+#     os.getenv('CLIENT_HOSTS'),
 #     'localhost:8000',
-#     '127.0.0.1:9000'
+#     '127.0.0.1:8000'
 # )
 
 try:
