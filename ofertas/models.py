@@ -1,5 +1,6 @@
 from django.db import models
 from estaciones.models import Estacion
+from suministros.models import Suministro
 
 class Oferta(models.Model):
     supervisor = models.CharField(max_length=255, blank=True, null=True)
@@ -15,7 +16,7 @@ class Oferta(models.Model):
 
     # subsistema = models.ForeignKey(Subsistema,  blank=True, null=True, related_name='ofertas')
     #
-    # suministro = models.ForeignKey(Suministro,  blank=True, null=True, related_name='ofertas')
+    suministro = models.ForeignKey(Suministro,  blank=True, null=True, related_name='ofertas')
     # servicio = models.ForeignKey(Servicio,  blank=True, null=True, related_name='ofertas')
 
     codigo_lpu = models.CharField(max_length=255, blank=True, null=True)
@@ -29,7 +30,7 @@ class Oferta(models.Model):
 
     estado_oferta = models.CharField(max_length=255, blank=True, null=True)
     subestado_oferta = models.CharField(max_length=255, blank=True, null=True)
-    
+
     estado = models.BooleanField(default=True, editable=False)
     subestado = models.BooleanField(default=False, editable=False)
     creado = models.DateTimeField(auto_now_add=True)

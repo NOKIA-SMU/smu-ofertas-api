@@ -30,15 +30,17 @@ ALLOWED_HOSTS = [os.getenv('SERVER_HOSTS')]
 # Application definition
 
 INSTALLED_APPS = [
+    # django modules
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # modules
+    # smuofertas modules
     'estaciones.apps.EstacionesConfig',
     'ofertas.apps.OfertasConfig',
+    'suministros.apps.SuministrosConfig',
     # dependencies
     'import_export',
     'graphene_django',
