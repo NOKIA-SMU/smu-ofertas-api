@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # modules
     'estaciones.apps.EstacionesConfig',
+    'ofertas.apps.OfertasConfig',
     # dependencies
     'import_export',
     'graphene_django',
