@@ -1,9 +1,9 @@
 from django.db import models
-from subsistemas.models import Subsistema
+from estaciones.models import Estacion
 
-class Suministro(models.Model):
+class Subsistema(models.Model):
     nombre = models.CharField(max_length=255, unique=True)
-    subsistema = models.ForeignKey(Subsistema,  blank=True, null=True, related_name='suministros')
+    estacion = models.ForeignKey(Estacion,  blank=True, null=True, related_name='subsistemas')
 
     estado = models.BooleanField(default=True, editable=False)
     subestado = models.BooleanField(default=False, editable=False)
@@ -12,8 +12,8 @@ class Suministro(models.Model):
 
     class Meta:
         ordering = ('creado',)
-        verbose_name = 'suministro'
-        verbose_name_plural = 'suministros'
+        verbose_name = 'subsistema'
+        verbose_name_plural = 'subsistemas'
 
     def __str__(self):
         return self.nombre

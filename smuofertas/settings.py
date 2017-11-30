@@ -39,8 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # smuofertas modules
     'estaciones.apps.EstacionesConfig',
-    'ofertas.apps.OfertasConfig',
+    'subsistemas.apps.SubsistemasConfig',
     'suministros.apps.SuministrosConfig',
+    'servicios.apps.ServiciosConfig',
+    'ofertas.apps.OfertasConfig',
     # dependencies
     'import_export',
     'graphene_django',
@@ -141,7 +143,7 @@ else:
 
 STATIC_ROOT = 'static/'
 
-# IMPORT_EXPORT_USE_TRANSACTIONS = True
+IMPORT_EXPORT_USE_TRANSACTIONS = True
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
 GRAPHENE = {

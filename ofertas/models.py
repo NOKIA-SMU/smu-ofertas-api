@@ -1,23 +1,23 @@
 from django.db import models
 from estaciones.models import Estacion
+from subsistemas.models import Subsistema
 from suministros.models import Suministro
+from servicios.models import Servicio
 
 class Oferta(models.Model):
     supervisor = models.CharField(max_length=255, blank=True, null=True)
     estacion = models.ForeignKey(Estacion,  blank=True, null=True, related_name='ofertas')
-    region = models.CharField(max_length=255, blank=True, null=True)
-    departamento = models.CharField(max_length=255, blank=True, null=True)
-    ciudad = models.CharField(max_length=255, blank=True, null=True)
+    
     tipo_oferta = models.CharField(max_length=255, blank=True, null=True)
     tarea = models.CharField(max_length=255, blank=True, null=True)
     descripcion_tarea = models.CharField(max_length=255, blank=True, null=True)
     tas_cliente = models.CharField(max_length=255, blank=True, null=True)
     encargado_cliente = models.CharField(max_length=255, blank=True, null=True)
 
-    # subsistema = models.ForeignKey(Subsistema,  blank=True, null=True, related_name='ofertas')
-    #
+    subsistema = models.ForeignKey(Subsistema,  blank=True, null=True, related_name='ofertas')
+
     suministro = models.ForeignKey(Suministro,  blank=True, null=True, related_name='ofertas')
-    # servicio = models.ForeignKey(Servicio,  blank=True, null=True, related_name='ofertas')
+    servicio = models.ForeignKey(Servicio,  blank=True, null=True, related_name='ofertas')
 
     codigo_lpu = models.CharField(max_length=255, blank=True, null=True)
     codigo_mm = models.CharField(max_length=255, blank=True, null=True)
