@@ -1,9 +1,7 @@
 from django.db import models
-from estaciones.models import Estacion
 
 class Subsistema(models.Model):
     nombre = models.CharField(max_length=255, unique=True)
-    estacion = models.ForeignKey(Estacion,  blank=True, null=True, related_name='subsistemas')
 
     estado = models.BooleanField(default=True, editable=False)
     subestado = models.BooleanField(default=False, editable=False)

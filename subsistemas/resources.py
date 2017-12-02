@@ -12,7 +12,6 @@ class SubsistemaResource(resources.ModelResource):
         export_order = (
         'id',
         'nombre',
-        'estacion',
         'estado',
         'subestado',
         )
