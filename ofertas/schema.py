@@ -6,7 +6,7 @@ class OfertaType(DjangoObjectType):
     class Meta:
         model = Oferta
 
-class Query(graphene.ObjectType):
+class OfertaQuery(graphene.ObjectType):
     ofertas = graphene.List(OfertaType)
     oferta = graphene.Field(OfertaType,
                               id=graphene.Int())

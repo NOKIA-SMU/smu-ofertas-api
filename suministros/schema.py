@@ -6,7 +6,7 @@ class SuministroType(DjangoObjectType):
     class Meta:
         model = Suministro
 
-class Query(graphene.ObjectType):
+class SuministroQuery(graphene.ObjectType):
     suministros = graphene.List(SuministroType)
     suministro = graphene.Field(SuministroType,
                               id=graphene.Int(),

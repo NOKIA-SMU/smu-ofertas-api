@@ -6,7 +6,7 @@ class SubsistemaType(DjangoObjectType):
     class Meta:
         model = Subsistema
 
-class Query(graphene.ObjectType):
+class SubsistemaQuery(graphene.ObjectType):
     subsistemas = graphene.List(SubsistemaType)
     subsistema = graphene.Field(SubsistemaType,
                               id=graphene.Int(),

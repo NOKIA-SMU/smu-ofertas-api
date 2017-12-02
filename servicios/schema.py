@@ -6,7 +6,7 @@ class ServicioType(DjangoObjectType):
     class Meta:
         model = Servicio
 
-class Query(graphene.ObjectType):
+class ServicioQuery(graphene.ObjectType):
     servicios = graphene.List(ServicioType)
     servicio = graphene.Field(ServicioType,
                               id=graphene.Int(),

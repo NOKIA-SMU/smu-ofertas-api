@@ -2,7 +2,6 @@ from django.db import models
 
 class Estacion(models.Model):
     nombre = models.CharField(max_length=255, unique=True)
-    
     ubicacion = models.CharField(max_length=255, blank=True, null=True)
     region = models.CharField(max_length=255, blank=True, null=True)
     departamento = models.CharField(max_length=255, blank=True, null=True)
