@@ -7,10 +7,18 @@ from .resources import SolicitudResource
 @admin.register(Solicitud)
 class SolicitudAdmin(ImportExportModelAdmin):
     resource_class = SolicitudResource
-    # list_display = (
-    # 'id',
-    #
-    # )
+    list_display = (
+    'id',
+    'supervisor',
+    'analista',
+    'tas',
+    'estacion',
+    'subsistema',
+    'all_suministros',
+    'all_servicios',
+    'prioridad',
+    'estado_solicitud',
+    )
     # list_filter = (
     #
     # )
@@ -18,3 +26,8 @@ class SolicitudAdmin(ImportExportModelAdmin):
     # 'id',
     #
     # ]
+    def all_suministros(self, obj):
+        return "\n".join([suministro.nombre for suministro in obj.suministros.all()])
+
+    def all_servicios(self, obj):
+        return "\n".join([servicio.nombre for servicio in obj.servicios.all()])

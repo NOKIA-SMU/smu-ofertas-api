@@ -20,56 +20,57 @@ class SubsistemaQuery(graphene.ObjectType):
         nombre = kwargs.get('nombre')
 
         if id is not None:
-            return Subsitema.objects.get(pk=id)
+            return Subsistema.objects.get(pk=id)
 
         if nombre is not None:
-            return Subsitema.objects.get(nombre=nombre)
+            return Subsistema.objects.get(nombre=nombre)
 
         return None
 
-    '''
-    query {
-      subsistemas {
-        id
-        nombre
-      }
-    }
-    '''
+'''
+query {
+  subsistemas {
+    id
+    nombre
+  }
+}
+'''
 
-    '''
-    query {
-      subsistema(id:ID) {
-        id
-        nombre
-      }
-    }
-    '''
+'''
+query {
+  subsistema(id:ID) {
+    id
+    nombre
+  }
+}
+'''
 
 class CreateSubsistema(graphene.Mutation):
     class Arguments:
         nombre = graphene.String(required=True)
 
     subsistema = graphene.Field(SubsistemaType)
+    status = graphene.Int()
 
     def mutate(self, info,
                nombre):
         subsistema = Subsistema.objects.create(
                nombre=nombre)
-        return CreateSubsistema(subsistema=subsistema)
+        return CreateSubsistema(subsistema=subsistema, status=200)
 
-
-    '''
-    mutation {
-      createSubsistema(
-        nombre: " "
-      ) {
-        subsistema {
-          id
-          nombre
-        }
-      }
+'''
+mutation {
+  createSubsistema(
+    nombre: " "
+  ) {
+    subsistema {
+      id
+      nombre
     }
-    '''
+    status
+  }
+}
+'''
 
 class UpdateSubsistema(graphene.Mutation):
     class Arguments:
@@ -77,50 +78,54 @@ class UpdateSubsistema(graphene.Mutation):
         nombre = graphene.String()
 
     subsistema = graphene.Field(SubsistemaType)
+    status = graphene.Int()
 
     def mutate(self, info,
                 id,
                 nombre):
         subsistema = Subsistema.objects.get(pk=id)
-        subsistema.nombre=nombre
+        subsistema.nombre = nombre
         subsistema.save()
-        return UpdateSubsistema(subsistema=subsistema)
+        return UpdateSubsistema(subsistema=subsistema, status=200)
 
-    '''
-    mutation {
-      updateSubsistema(
-        id: ID,
-        nombre: " ",
-      ) {
-        subsistema {
-          id
-          nombre
-        }
-      }
+'''
+mutation {
+  updateSubsistema(
+    id: ID,
+    nombre: " ",
+  ) {
+    subsistema {
+      id
+      nombre
     }
-    '''
+    status
+  }
+}
+'''
 
 class DeleteSubsistema(graphene.Mutation):
     class Arguments:
         id = graphene.Int()
 
     subsistema = graphene.Field(SubsistemaType)
+    status = graphene.Int()
 
     def mutate(self, info, id):
         subsistema = Subsistema.objects.get(pk=id)
         subsistema.delete()
-        return DeleteSubsistema()
+        return DeleteSubsistema(status=200)
 
-    '''
-    mutation {
-      deleteSubsistema(id:ID) {
-        subsistema {
-          id
-          nombre
-        }
-      }
+'''
+mutation {
+  deleteSubsistema(id:ID) {
+    subsistema {
+      id
+      nombre
     }
-    '''
+    status
+  }
+}
+'''
 
 class SubsistemaMutation(graphene.ObjectType):
     create_subsistema = CreateSubsistema.Field()

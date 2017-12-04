@@ -27,41 +27,41 @@ class EstacionQuery(graphene.ObjectType):
 
         return None
 
-    '''
-    query {
-      estaciones {
-        id
-        nombre
-        ubicacion
-        region
-        departamento
-        ciudad
-        direccion
-        latitud
-        longitud
-        estructura
-        categoria
-      }
-    }
-    '''
+'''
+query {
+  estaciones {
+    id
+    nombre
+    ubicacion
+    region
+    departamento
+    ciudad
+    direccion
+    latitud
+    longitud
+    estructura
+    categoria
+  }
+}
+'''
 
-    '''
-    query {
-      estacion(id:ID) {
-        id
-        nombre
-        ubicacion
-        region
-        departamento
-        ciudad
-        direccion
-        latitud
-        longitud
-        estructura
-        categoria
-      }
-    }
-    '''
+'''
+query {
+  estacion(id:ID) {
+    id
+    nombre
+    ubicacion
+    region
+    departamento
+    ciudad
+    direccion
+    latitud
+    longitud
+    estructura
+    categoria
+  }
+}
+'''
 
 class CreateEstacion(graphene.Mutation):
     class Arguments:
@@ -77,6 +77,7 @@ class CreateEstacion(graphene.Mutation):
         categoria = graphene.String()
 
     estacion = graphene.Field(EstacionType)
+    status = graphene.Int()
 
     def mutate(self, info,
                nombre,
@@ -100,39 +101,39 @@ class CreateEstacion(graphene.Mutation):
                longitud=longitud,
                estructura=estructura,
                categoria=categoria)
-        return CreateEstacion(estacion=estacion)
+        return CreateEstacion(estacion=estacion, status=200)
 
 
-    '''
-    mutation {
-      createEstacion(
-        nombre: " ",
-        ubicacion: " ",
-        region: " ",
-        departamento: " ",
-        ciudad: " ",
-        direccion: " ",
-        latitud: 0.0,
-        longitud: 0.0,
-        estructura: " ",
-        categoria: " ",
-      ) {
-        estacion {
-          id
-          nombre
-          ubicacion
-          region
-          departamento
-          ciudad
-          direccion
-          latitud
-          longitud
-          estructura
-          categoria
-        }
-      }
+'''
+mutation {
+  createEstacion(
+    nombre: " ",
+    ubicacion: " ",
+    region: " ",
+    departamento: " ",
+    ciudad: " ",
+    direccion: " ",
+    latitud: 0.0,
+    longitud: 0.0,
+    estructura: " ",
+    categoria: " ",
+  ) {
+    estacion {
+      id
+      nombre
+      ubicacion
+      region
+      departamento
+      ciudad
+      direccion
+      latitud
+      longitud
+      estructura
+      categoria
     }
-    '''
+  }
+}
+'''
 
 class UpdateEstacion(graphene.Mutation):
     class Arguments:
@@ -149,6 +150,7 @@ class UpdateEstacion(graphene.Mutation):
         categoria = graphene.String()
 
     estacion = graphene.Field(EstacionType)
+    status = graphene.Int()
 
     def mutate(self, info,
                 id,
@@ -163,71 +165,72 @@ class UpdateEstacion(graphene.Mutation):
                 estructura,
                 categoria):
         estacion = Estacion.objects.get(pk=id)
-        estacion.nombre=nombre
-        estacion.ubicacion=ubicacion
-        estacion.region=region
-        estacion.departamento=departamento
-        estacion.ciudad=ciudad
-        estacion.direccion=direccion
-        estacion.latitud=latitud
-        estacion.longitud=longitud
-        estacion.estructura=estructura
-        estacion.categoria=categoria
+        estacion.nombre = nombre
+        estacion.ubicacion = ubicacion
+        estacion.region = region
+        estacion.departamento = departamento
+        estacion.ciudad = ciudad
+        estacion.direccion = direccion
+        estacion.latitud = latitud
+        estacion.longitud = longitud
+        estacion.estructura = estructura
+        estacion.categoria = categoria
         estacion.save()
-        return UpdateEstacion(estacion=estacion)
+        return UpdateEstacion(estacion=estacion, status=200)
 
-    '''
-    mutation {
-      updateEstacion(
-        id: ID,
-        nombre: " ",
-        ubicacion: " ",
-        region: " ",
-        departamento: " ",
-        ciudad: " ",
-        direccion: " ",
-        latitud: " ",
-        longitud: " ",
-        estructura: " ",
-        categoria: " ",
-      ) {
-        estacion {
-          id
-          nombre
-          ubicacion
-          region
-          departamento
-          ciudad
-          direccion
-          latitud
-          longitud
-          estructura
-          categoria
-        }
-      }
+'''
+mutation {
+  updateEstacion(
+    id: ID,
+    nombre: " ",
+    ubicacion: " ",
+    region: " ",
+    departamento: " ",
+    ciudad: " ",
+    direccion: " ",
+    latitud: " ",
+    longitud: " ",
+    estructura: " ",
+    categoria: " ",
+  ) {
+    estacion {
+      id
+      nombre
+      ubicacion
+      region
+      departamento
+      ciudad
+      direccion
+      latitud
+      longitud
+      estructura
+      categoria
     }
-    '''
+  }
+}
+'''
 
 class DeleteEstacion(graphene.Mutation):
     class Arguments:
         id = graphene.Int()
 
     estacion = graphene.Field(EstacionType)
+    status = graphene.Int()
 
     def mutate(self, info, id):
         estacion = Estacion.objects.get(pk=id)
         estacion.delete()
-        return DeleteEstacion()
+        return DeleteEstacion(status=200)
 
-    '''
-    mutation {
-      deleteEstacion(id:ID) {
-        estacion {
-          id
-        }
-      }
+'''
+mutation {
+  deleteEstacion(id:ID) {
+    estacion {
+      id
     }
-    '''
+  }
+}
+'''
 
 class EstacionMutation(graphene.ObjectType):
     create_estacion = CreateEstacion.Field()

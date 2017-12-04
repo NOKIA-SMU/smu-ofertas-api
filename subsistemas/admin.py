@@ -7,14 +7,15 @@ from .resources import SubsistemaResource
 @admin.register(Subsistema)
 class SubsistemaAdmin(ImportExportModelAdmin):
     resource_class = SubsistemaResource
-    # list_display = (
-    # 'id',
-    # 'nombre',
-    #
-    # )
-    # list_filter = (
-    #
-    # )
-    # search_fields = [
-    #
-    # ]
+    list_display = (
+    'id',
+    'nombre',
+    )
+    list_filter = (
+    'id',
+    'nombre',
+    )
+    search_fields = [
+    'id',
+    'nombre',
+    ]

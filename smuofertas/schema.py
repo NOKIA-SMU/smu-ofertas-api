@@ -3,6 +3,7 @@ from estaciones.schema import EstacionQuery, EstacionMutation
 from subsistemas.schema import SubsistemaQuery, SubsistemaMutation
 from suministros.schema import SuministroQuery
 from servicios.schema import ServicioQuery
+from solicitudes.schema import SolicitudQuery, SolicitudMutation
 from ofertas.schema import OfertaQuery
 
 class RootQuery(
@@ -10,6 +11,7 @@ class RootQuery(
             SubsistemaQuery,
             SuministroQuery,
             ServicioQuery,
+            SolicitudQuery,
             OfertaQuery,
             graphene.ObjectType):
     pass
@@ -17,6 +19,7 @@ class RootQuery(
 class RootMutation(
         EstacionMutation,
         SubsistemaMutation,
+        SolicitudMutation,
         graphene.ObjectType):
     pass
 
