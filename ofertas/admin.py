@@ -7,14 +7,16 @@ from .resources import OfertaResource
 @admin.register(Oferta)
 class OfertaAdmin(ImportExportModelAdmin):
     resource_class = OfertaResource
-    # list_display = (
-    # 'id',
-    #
-    # )
+    list_display = (
+    'id',
+    'solicitud',
+    'suministro',
+    'servicio',
+    'cantidad',
+    )
     # list_filter = (
     #
     # )
-    # search_fields = [
-    # 'id',
-    #
-    # ]
+    search_fields = [
+    'id',
+    ]

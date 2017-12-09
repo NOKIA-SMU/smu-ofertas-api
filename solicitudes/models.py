@@ -6,7 +6,9 @@ from suministros.models import Suministro
 from servicios.models import Servicio
 
 class Solicitud(models.Model):
+    supervisor_id = models.CharField(max_length=255, blank=True, null=True)
     supervisor = models.CharField(max_length=255, blank=True, null=True)
+    analista_id = models.CharField(max_length=255, blank=True, null=True)
     analista = models.CharField(max_length=255, blank=True, null=True)
     tas = models.CharField(max_length=255, blank=True, null=True)
     estacion = models.ForeignKey(Estacion, blank=True, null=True, related_name='solicitudes')

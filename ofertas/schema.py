@@ -1,6 +1,7 @@
 import graphene
 from graphene_django.types import DjangoObjectType
 from .models import Oferta
+from . import choices
 
 class OfertaType(DjangoObjectType):
     class Meta:
@@ -10,6 +11,7 @@ class OfertaQuery(graphene.ObjectType):
     ofertas = graphene.List(OfertaType)
     oferta = graphene.Field(OfertaType,
                               id=graphene.Int())
+    tipoOfertas = graphene.List(graphene.String)
 
     def resolve_ofertas(self, info, **kwargs):
         return Oferta.objects.all()
@@ -19,3 +21,6 @@ class OfertaQuery(graphene.ObjectType):
         if id is not None:
             return Oferta.objects.get(pk=id)
         return None
+
+    def resolve_tipoOfertas(self, info, **kwargs):
+        return choices.TIPO_OFERTA_CHOICES

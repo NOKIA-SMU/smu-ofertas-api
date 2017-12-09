@@ -3,13 +3,23 @@ from suministros.models import Suministro
 from servicios.models import Servicio
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
+from . import choices
 
 from solicitudes.models import Solicitud
 
 class Oferta(models.Model):
+    # supervisor
     solicitud = models.ForeignKey(Solicitud, blank=True, null=True, related_name='ofertas')
     suministro = models.ForeignKey(Suministro, blank=True, null=True, related_name='ofertas')
     servicio = models.ForeignKey(Servicio, blank=True, null=True, related_name='ofertas')
+    cantidad = models.PositiveIntegerField(blank=True, null=True)
+    tipo_oferta = models.CharField(max_length=255, blank=True, null=True, choices=choices.TIPO_OFERTA_CHOICES)
+    tarea = models.CharField(max_length=255, blank=True, null=True)
+    descripcion_tarea = models.TextField(blank=True, null=True)
+    encargado_cliente = models.CharField(max_length=255, blank=True, null=True)
+
+    # analista
+    usuario = models.CharField(max_length=255, blank=True, null=True)
 
     estado_oferta = models.CharField(max_length=255, blank=True, null=True)
     subestado_oferta = models.CharField(max_length=255, blank=True, null=True)
@@ -33,7 +43,8 @@ class Oferta(models.Model):
             if instance.estado_solicitud == True:
                 for suministro in instance.suministros.all():
                     oferta, new = Oferta.objects.get_or_create(solicitud=instance,
-                                                               suministro=suministro
+                                                               suministro=suministro,
+                                                               cantidad=suministro.cantidad
                                                                )
 
     @receiver(post_save, sender=Solicitud)
@@ -41,7 +52,8 @@ class Oferta(models.Model):
         if instance.estado_solicitud == True:
             for suministro in instance.suministros.all():
                 oferta, new = Oferta.objects.get_or_create(solicitud=instance,
-                                                           suministro=suministro
+                                                           suministro=suministro,
+                                                           cantidad=suministro.cantidad
                                                            )
 
     @receiver(m2m_changed, sender=Solicitud.servicios.through)
@@ -50,7 +62,8 @@ class Oferta(models.Model):
             if action:
                 for servicio in instance.servicios.all():
                     oferta, new = Oferta.objects.get_or_create(solicitud=instance,
-                                                               servicio=servicio
+                                                               servicio=servicio,
+                                                               cantidad=servicio.cantidad
                                                                )
 
     @receiver(post_save, sender=Solicitud)
@@ -58,5 +71,6 @@ class Oferta(models.Model):
         if instance.estado_solicitud == True:
             for servicio in instance.servicios.all():
                 oferta, new = Oferta.objects.get_or_create(solicitud=instance,
-                                                           servicio=servicio
+                                                           servicio=servicio,
+                                                           cantidad=servicio.cantidad
                                                            )

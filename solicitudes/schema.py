@@ -1,10 +1,14 @@
 import graphene
+from graphql import GraphQLError
 from graphene_django.types import DjangoObjectType
 from .models import Solicitud
 from estaciones.models import Estacion
 from subsistemas.models import Subsistema
 from suministros.models import Suministro
 from servicios.models import Servicio
+from tokens.schema import TokenType
+from tokens.models import Token
+from . import choices
 
 class SolicitudType(DjangoObjectType):
     class Meta:
@@ -14,6 +18,7 @@ class SolicitudQuery(graphene.ObjectType):
     solicitudes = graphene.List(SolicitudType)
     solicitud = graphene.Field(SolicitudType,
                               id=graphene.Int())
+    prioridades = graphene.List(graphene.String)
 
     def resolve_solicitudes(self, info, **kwargs):
         return Solicitud.objects.all()
@@ -24,12 +29,17 @@ class SolicitudQuery(graphene.ObjectType):
             return Solicitud.objects.get(pk=id)
         return None
 
+    def resolve_prioridades(self, info, **kwargs):
+        return choices.PRIORIDAD_CHOICES
+
 '''
 query {
   solicitudes {
     id
+    supervisorId
     supervisor
     analista
+    analistaId
     tas
     estacion {
         id
@@ -53,8 +63,10 @@ query {
 query {
   solicitud(id:ID) {
     id
+    supervisorId
     supervisor
     analista
+    analistaId
     tas
     estacion {
         id
@@ -74,34 +86,60 @@ query {
 }
 '''
 
+'''
+query {
+  prioridades
+}
+'''
+
 class CreateSolicitud(graphene.Mutation):
     class Arguments:
+        supervisorId = graphene.String()
         supervisor = graphene.String()
+        analistaId = graphene.String()
         analista = graphene.String()
         tas = graphene.String()
         estacion = graphene.ID()
         subsistema = graphene.ID()
         suministros = graphene.List(graphene.ID)
+        suministrosQty = graphene.List(graphene.Int)
         servicios = graphene.List(graphene.ID)
+        serviciosQty = graphene.List(graphene.Int)
         prioridad = graphene.String()
         estadoSolicitud = graphene.Boolean()
+        uid = graphene.String()
+        credential = graphene.String()
 
     solicitud = graphene.Field(SolicitudType)
     status = graphene.Int()
 
     def mutate(self, info,
+               supervisorId,
                supervisor,
+               analistaId,
                analista,
                tas,
                estacion,
                subsistema,
                suministros,
+               suministrosQty,
                servicios,
+               serviciosQty,
                prioridad,
                estadoSolicitud,
+               uid,
+               credential,
                ):
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
         solicitud = Solicitud.objects.create(
+               supervisor_id=supervisorId,
                supervisor=supervisor,
+               analista_id=analistaId,
                analista=analista,
                tas=tas,
                estacion=Estacion.objects.get(pk=estacion),
@@ -109,31 +147,43 @@ class CreateSolicitud(graphene.Mutation):
                prioridad=prioridad,
                estado_solicitud=estadoSolicitud,
                )
-        for suministro_id in suministros:
+        for (suministro_id, suministro_qty) in zip(suministros, suministrosQty):
             suministro = Suministro.objects.get(id=suministro_id)
+            suministro.cantidad = suministro_qty
+            suministro.save()
             solicitud.suministros.add(suministro)
-        for servicio_id in servicios:
-            servicio = Suministro.objects.get(id=servicio_id)
+        for (servicio_id, servicio_qty) in zip(servicios, serviciosQty):
+            servicio = Servicio.objects.get(id=servicio_id)
+            servicio.cantidad = servicio_qty
+            servicio.save()
             solicitud.servicios.add(servicio)
         return CreateSolicitud(solicitud=solicitud, status=200)
 
 '''
 mutation {
   createSolicitud(
+    supervisorId: " ",
     supervisor: " ",
+    analistaId: " ",
     analista: " ",
     tas: " ",
     estacion: ID,
     subsistema: ID,
     suministros: [ID],
+    suministrosQty: [Int],
     servicios: [ID],
+    serviciosQty: [Int],
     prioridad: " ",
     estadoSolicitud: BOOLEAN,
+    uid:" ",
+    credential: " ",
   ) {
     solicitud {
       id
+      supervisorId
       supervisor
       analista
+      analistaId
       tas
       estacion
       subsistema {
@@ -156,42 +206,66 @@ mutation {
 class UpdateSolicitud(graphene.Mutation):
     class Arguments:
         id = graphene.Int()
+        supervisorId = graphene.String()
         supervisor = graphene.String()
+        analistaId = graphene.String()
         analista = graphene.String()
         tas = graphene.String()
         estacion = graphene.ID()
         subsistema = graphene.ID()
         suministros = graphene.List(graphene.ID)
+        suministrosQty = graphene.List(graphene.Int)
         servicios = graphene.List(graphene.ID)
+        serviciosQty = graphene.List(graphene.Int)
         prioridad = graphene.String()
         estadoSolicitud = graphene.Boolean()
+        uid = graphene.String()
+        credential = graphene.String()
 
     solicitud = graphene.Field(SolicitudType)
     status = graphene.Int()
 
     def mutate(self, info,
                 id,
+                supervisorId,
                 supervisor,
+                analistaId,
                 analista,
                 tas,
                 estacion,
                 subsistema,
                 suministros,
+                suministrosQty,
                 servicios,
+                serviciosQty,
                 prioridad,
                 estadoSolicitud,
+                uid,
+                credential,
                 ):
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
         solicitud = Solicitud.objects.get(pk=id)
+        solicitud.supervisor_id = supervisorId
         solicitud.supervisor = supervisor
+        solicitud.analista_id = analistaId
         solicitud.analista = analista
         solicitud.tas = tas
         solicitud.estacion = Estacion.objects.get(pk=estacion)
         solicitud.subsistema = Subsistema.objects.get(pk=subsistema)
-        for suministro_id in suministros:
+        for (suministro_id, suministro_qty) in zip(suministros, suministrosQty):
             suministro = Suministro.objects.get(id=suministro_id)
+            suministro.cantidad = suministro_qty
+            suministro.save()
             solicitud.suministros.add(suministro)
-        for servicio_id in servicios:
-            servicio = Suministro.objects.get(id=servicio_id)
+        for (servicio_id, servicio_qty) in zip(servicios, serviciosQty):
+            servicio = Servicio.objects.get(id=servicio_id)
+            servicio.cantidad = servicio_qty
+            servicio.save()
             solicitud.servicios.add(servicio)
         solicitud.prioridad = prioridad
         solicitud.estado_solicitud = estadoSolicitud
@@ -202,20 +276,28 @@ class UpdateSolicitud(graphene.Mutation):
 mutation {
   updateSolicitud(
     id: ID,
+    supervisorId: " ",
     supervisor: " ",
+    analistaId: " ",
     analista: " ",
     tas: " ",
     estacion: ID,
     subsistema: ID,
     suministros: [ID],
+    suministrosQty: [Int],
     servicios: [ID],
+    serviciosQty: [Int],
     prioridad: " ",
     estadoSolicitud: BOOLEAN,
+    uid:" ",
+    credential: " ",
   ) {
     solicitud {
       id
+      supervisorId
       supervisor
       analista
+      analistaId
       tas
       estacion {
         id
@@ -240,18 +322,34 @@ mutation {
 class DeleteSolicitud(graphene.Mutation):
     class Arguments:
         id = graphene.Int()
+        uid = graphene.String()
+        credential = graphene.String()
 
     solicitud = graphene.Field(SolicitudType)
     status = graphene.Int()
 
-    def mutate(self, info, id):
+    def mutate(self, info,
+                id,
+                uid,
+                credential,
+                ):
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
         solicitud = Solicitud.objects.get(pk=id)
         solicitud.delete()
         return DeleteSolicitud(status=200)
 
 '''
 mutation {
-  deleteSolicitud(id:ID) {
+  deleteSolicitud(
+    id:ID,
+    uid:" ",
+    credential: " ",
+  ) {
     solicitud {
       id
     }

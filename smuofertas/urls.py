@@ -17,10 +17,18 @@ from django.conf.urls import url
 from django.contrib import admin
 admin.site.site_header = 'NOKIA SMU'
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.mixins import LoginRequiredMixin
 from graphene_django.views import GraphQLView
 from smuofertas.schema import schema
+from django.contrib.auth import views as auth_views
+
+class PrivateGraphQLView(LoginRequiredMixin, GraphQLView):
+    pass
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^accounts/login/$', auth_views.LoginView.as_view(), name='login'),
+    url(r'^accounts/logout/$', auth_views.LogoutView.as_view(), name='logout'),
+    # url(r'^graphql', csrf_exempt(PrivateGraphQLView.as_view(graphiql=True, schema=schema)), name='graphql'),
     url(r'^graphql', csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
 ]

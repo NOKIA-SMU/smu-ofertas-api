@@ -7,12 +7,15 @@ class EstacionType(DjangoObjectType):
         model = Estacion
 
 class EstacionQuery(graphene.ObjectType):
-    estaciones = graphene.List(EstacionType)
+    estaciones = graphene.List(EstacionType,
+                              query=graphene.String())
     estacion = graphene.Field(EstacionType,
                               id=graphene.Int(),
                               nombre=graphene.String())
 
-    def resolve_estaciones(self, info, **kwargs):
+    def resolve_estaciones(self, info, query=None, **kwargs):
+        if query:
+            return Estacion.objects.filter(region=query)
         return Estacion.objects.all()
 
     def resolve_estacion(self, info, **kwargs):

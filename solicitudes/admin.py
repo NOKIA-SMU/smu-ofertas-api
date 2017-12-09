@@ -9,7 +9,9 @@ class SolicitudAdmin(ImportExportModelAdmin):
     resource_class = SolicitudResource
     list_display = (
     'id',
+    'supervisor_id',
     'supervisor',
+    'analista_id',
     'analista',
     'tas',
     'estacion',
@@ -22,10 +24,9 @@ class SolicitudAdmin(ImportExportModelAdmin):
     # list_filter = (
     #
     # )
-    # search_fields = [
-    # 'id',
-    #
-    # ]
+    search_fields = [
+    'id',
+    ]
     def all_suministros(self, obj):
         return "\n".join([suministro.nombre for suministro in obj.suministros.all()])
 

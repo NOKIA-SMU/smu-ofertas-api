@@ -7,12 +7,15 @@ class ServicioType(DjangoObjectType):
         model = Servicio
 
 class ServicioQuery(graphene.ObjectType):
-    servicios = graphene.List(ServicioType)
+    servicios = graphene.List(ServicioType,
+                              query=graphene.String())
     servicio = graphene.Field(ServicioType,
                               id=graphene.Int(),
                               nombre=graphene.String())
 
-    def resolve_servicios(self, info, **kwargs):
+    def resolve_servicios(self, info, query=None, **kwargs):
+        if query:
+            return Servicio.objects.filter(subsistema=query)
         return Servicio.objects.all()
 
     def resolve_servicio(self, info, **kwargs):

@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # smuofertas modules
+    'users.apps.UsersConfig',
+    'tokens.apps.TokensConfig',
     'estaciones.apps.EstacionesConfig',
     'subsistemas.apps.SubsistemasConfig',
     'suministros.apps.SuministrosConfig',
@@ -66,7 +68,7 @@ ROOT_URLCONF = 'smuofertas.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
