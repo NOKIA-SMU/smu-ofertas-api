@@ -92,6 +92,14 @@ query {
 }
 '''
 
+class SuministroInput(graphene.InputObjectType):
+    suministroId = graphene.Int()
+    suministroQty = graphene.Int()
+
+class ServicioInput(graphene.InputObjectType):
+    servicioId = graphene.Int()
+    servicioQty = graphene.Int()
+
 class CreateSolicitud(graphene.Mutation):
     class Arguments:
         supervisorId = graphene.String()
@@ -101,10 +109,8 @@ class CreateSolicitud(graphene.Mutation):
         tas = graphene.String()
         estacion = graphene.ID()
         subsistema = graphene.ID()
-        suministros = graphene.List(graphene.ID)
-        suministrosQty = graphene.List(graphene.Int)
-        servicios = graphene.List(graphene.ID)
-        serviciosQty = graphene.List(graphene.Int)
+        suministros = graphene.List(SuministroInput)
+        servicios = graphene.List(ServicioInput)
         prioridad = graphene.String()
         estadoSolicitud = graphene.Boolean()
         uid = graphene.String()
@@ -122,9 +128,7 @@ class CreateSolicitud(graphene.Mutation):
                estacion,
                subsistema,
                suministros,
-               suministrosQty,
                servicios,
-               serviciosQty,
                prioridad,
                estadoSolicitud,
                uid,
@@ -147,14 +151,14 @@ class CreateSolicitud(graphene.Mutation):
                prioridad=prioridad,
                estado_solicitud=estadoSolicitud,
                )
-        for (suministro_id, suministro_qty) in zip(suministros, suministrosQty):
-            suministro = Suministro.objects.get(id=suministro_id)
-            suministro.cantidad = suministro_qty
+        for i in suministros:
+            suministro = Suministro.objects.get(id=i['suministroId'])
+            suministro.cantidad = i['suministroQty']
             suministro.save()
             solicitud.suministros.add(suministro)
-        for (servicio_id, servicio_qty) in zip(servicios, serviciosQty):
-            servicio = Servicio.objects.get(id=servicio_id)
-            servicio.cantidad = servicio_qty
+        for i in servicios:
+            servicio = Servicio.objects.get(id=i['servicioId'])
+            servicio.cantidad = i['servicioQty']
             servicio.save()
             solicitud.servicios.add(servicio)
         return CreateSolicitud(solicitud=solicitud, status=200)
@@ -169,10 +173,8 @@ mutation {
     tas: " ",
     estacion: ID,
     subsistema: ID,
-    suministros: [ID],
-    suministrosQty: [Int],
-    servicios: [ID],
-    serviciosQty: [Int],
+    suministros: [{suministroId:Int,suministroQty:Int}],
+    servicios: [{servicioId:Int,servicioQty:Int}],
     prioridad: " ",
     estadoSolicitud: BOOLEAN,
     uid:" ",
@@ -213,10 +215,8 @@ class UpdateSolicitud(graphene.Mutation):
         tas = graphene.String()
         estacion = graphene.ID()
         subsistema = graphene.ID()
-        suministros = graphene.List(graphene.ID)
-        suministrosQty = graphene.List(graphene.Int)
-        servicios = graphene.List(graphene.ID)
-        serviciosQty = graphene.List(graphene.Int)
+        suministros = graphene.List(SuministroInput)
+        servicios = graphene.List(ServicioInput)
         prioridad = graphene.String()
         estadoSolicitud = graphene.Boolean()
         uid = graphene.String()
@@ -235,9 +235,7 @@ class UpdateSolicitud(graphene.Mutation):
                 estacion,
                 subsistema,
                 suministros,
-                suministrosQty,
                 servicios,
-                serviciosQty,
                 prioridad,
                 estadoSolicitud,
                 uid,
@@ -257,14 +255,14 @@ class UpdateSolicitud(graphene.Mutation):
         solicitud.tas = tas
         solicitud.estacion = Estacion.objects.get(pk=estacion)
         solicitud.subsistema = Subsistema.objects.get(pk=subsistema)
-        for (suministro_id, suministro_qty) in zip(suministros, suministrosQty):
-            suministro = Suministro.objects.get(id=suministro_id)
-            suministro.cantidad = suministro_qty
+        for i in suministros:
+            suministro = Suministro.objects.get(id=i['suministroId'])
+            suministro.cantidad = i['suministroQty']
             suministro.save()
             solicitud.suministros.add(suministro)
-        for (servicio_id, servicio_qty) in zip(servicios, serviciosQty):
-            servicio = Servicio.objects.get(id=servicio_id)
-            servicio.cantidad = servicio_qty
+        for i in servicios:
+            servicio = Servicio.objects.get(id=i['servicioId'])
+            servicio.cantidad = i['servicioQty']
             servicio.save()
             solicitud.servicios.add(servicio)
         solicitud.prioridad = prioridad
@@ -283,10 +281,8 @@ mutation {
     tas: " ",
     estacion: ID,
     subsistema: ID,
-    suministros: [ID],
-    suministrosQty: [Int],
-    servicios: [ID],
-    serviciosQty: [Int],
+    suministros: [{suministroId:Int,suministroQty:Int}],
+    servicios: [{servicioId:Int,servicioQty:Int}],
     prioridad: " ",
     estadoSolicitud: BOOLEAN,
     uid:" ",
