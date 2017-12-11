@@ -23,4 +23,10 @@ class OfertaQuery(graphene.ObjectType):
         return None
 
     def resolve_tipoOfertas(self, info, **kwargs):
-        return choices.TIPO_OFERTA_CHOICES
+        return dict(choices.TIPO_OFERTA_CHOICES)
+
+'''
+query {
+  tipoOfertas
+}
+'''

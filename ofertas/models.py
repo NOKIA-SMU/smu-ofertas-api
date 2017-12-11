@@ -4,6 +4,7 @@ from servicios.models import Servicio
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
 from . import choices
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from solicitudes.models import Solicitud
 
@@ -17,12 +18,60 @@ class Oferta(models.Model):
     tarea = models.CharField(max_length=255, blank=True, null=True)
     descripcion_tarea = models.TextField(blank=True, null=True)
     encargado_cliente = models.CharField(max_length=255, blank=True, null=True)
+    fecha_ejecucion = models.DateField(blank=True, null=True)
+    confirmacion_recibido = models.CharField(max_length=255, blank=True, null=True,
+                                choices=choices.CONFIRMACION_RECIBIDO_CHOICES)
+    comentario_supervisor = models.TextField(blank=True, null=True)
+    subestado_oferta = models.CharField(max_length=255, blank=True, null=True,
+                                choices=choices.SUBESTADO_OFERTA_CHOICES)
+    estado_oferta = models.CharField(max_length=255, blank=True, null=True,
+                                choices=choices.ESTADO_OFERTA_CHOICES)
 
     # analista
     usuario = models.CharField(max_length=255, blank=True, null=True)
+    numero_oferta = models.CharField(max_length=255, blank=True, null=True)
+    modalidad = models.CharField(max_length=255, blank=True, null=True,
+                                choices=choices.MODALIDAD_CHOICES)
+    percio_unidad_proveedor = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    percio_total_proveedor = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    percio_unidad_venta = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    percio_total_venta = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    percio_unidad_cliente = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    percio_total_cliente = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    margen = models.IntegerField(blank=True, null=True,
+                                validators=[MinValueValidator(0), MaxValueValidator(100)])
+    tipo_adquisicion = models.CharField(max_length=255, blank=True, null=True)
+    fecha_recibido_cliente = models.DateField(blank=True, null=True)
+    fecha_despacho_supervisor = models.DateField(blank=True, null=True)
+    fecha_despacho_compras = models.DateField(blank=True, null=True)
+    fecha_respuesta_compras = models.DateField(blank=True, null=True)
+    fecha_envio_cliente = models.DateField(blank=True, null=True)
+    fecha_respuesta_cliente = models.DateField(blank=True, null=True)
+    tipo_respuesta_cliente = models.CharField(max_length=255, blank=True, null=True,
+                                            choices=choices.TIPO_RESPUESTA_CLIENTE_CHOICES)
+    spo = models.CharField(max_length=255, blank=True, null=True)
+    fecha_po = models.DateField(blank=True, null=True)
+    comentario_analista = models.TextField(blank=True, null=True)
 
-    estado_oferta = models.CharField(max_length=255, blank=True, null=True)
-    subestado_oferta = models.CharField(max_length=255, blank=True, null=True)
+    # almacenista
+    fecha_entrga_almacen = models.DateField(blank=True, null=True)
+    comentario_almacenista = models.TextField(blank=True, null=True)
+
+    # coordinador lpu/apu
+    comentario_coordinador = models.TextField(blank=True, null=True)
+
+    # facturador
+    valor_conciliado_cliente = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    fecha_conciliado_cliente = models.DateField(blank=True, null=True)
+    comentario_facturador = models.TextField(blank=True, null=True)
+
+    # coordinador podas
+    fecha_envio_acta_smu = models.DateField(blank=True, null=True)
+    comentario_acta = models.TextField(blank=True, null=True)
+    fecha_firma_acta_smu = models.DateField(blank=True, null=True)
+
+    # estaditicas lpu/apu
+    fecha_gr_smu = models.DateField(blank=True, null=True)
 
     estado = models.BooleanField(default=True, editable=False)
     subestado = models.BooleanField(default=False, editable=False)
