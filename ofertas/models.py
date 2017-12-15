@@ -9,12 +9,16 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from solicitudes.models import Solicitud
 
 class Oferta(models.Model):
-    # supervisor
-    solicitud = models.ForeignKey(Solicitud, blank=True, null=True, related_name='ofertas')
-    suministro = models.ForeignKey(Suministro, blank=True, null=True, related_name='ofertas')
-    servicio = models.ForeignKey(Servicio, blank=True, null=True, related_name='ofertas')
+    # supervisor y analista
+    solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE,
+                                    blank=True, null=True, related_name='ofertas')
+    suministro = models.ForeignKey(Suministro, on_delete=models.CASCADE,
+                                    blank=True, null=True, related_name='ofertas')
+    servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE,
+                                    blank=True, null=True, related_name='ofertas')
     cantidad = models.PositiveIntegerField(blank=True, null=True)
-    tipo_oferta = models.CharField(max_length=255, blank=True, null=True, choices=choices.TIPO_OFERTA_CHOICES)
+    tipo_oferta = models.CharField(max_length=255, blank=True, null=True,
+                                choices=choices.TIPO_OFERTA_CHOICES)
     tarea = models.CharField(max_length=255, blank=True, null=True)
     descripcion_tarea = models.TextField(blank=True, null=True)
     encargado_cliente = models.CharField(max_length=255, blank=True, null=True)
@@ -32,12 +36,12 @@ class Oferta(models.Model):
     numero_oferta = models.CharField(max_length=255, blank=True, null=True)
     modalidad = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.MODALIDAD_CHOICES)
-    percio_unidad_proveedor = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    percio_total_proveedor = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    percio_unidad_venta = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    percio_total_venta = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    percio_unidad_cliente = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    percio_total_cliente = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    precio_unidad_proveedor = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    precio_total_proveedor = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    precio_unidad_venta = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    precio_total_venta = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    precio_unidad_cliente = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    precio_total_cliente = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     margen = models.IntegerField(blank=True, null=True,
                                 validators=[MinValueValidator(0), MaxValueValidator(100)])
     tipo_adquisicion = models.CharField(max_length=255, blank=True, null=True)
@@ -49,12 +53,12 @@ class Oferta(models.Model):
     fecha_respuesta_cliente = models.DateField(blank=True, null=True)
     tipo_respuesta_cliente = models.CharField(max_length=255, blank=True, null=True,
                                             choices=choices.TIPO_RESPUESTA_CLIENTE_CHOICES)
-    spo = models.CharField(max_length=255, blank=True, null=True)
+    po = models.CharField(max_length=255, blank=True, null=True)
     fecha_po = models.DateField(blank=True, null=True)
     comentario_analista = models.TextField(blank=True, null=True)
 
     # almacenista
-    fecha_entrga_almacen = models.DateField(blank=True, null=True)
+    fecha_entrega_almacen = models.DateField(blank=True, null=True)
     comentario_almacenista = models.TextField(blank=True, null=True)
 
     # coordinador lpu/apu
@@ -65,7 +69,7 @@ class Oferta(models.Model):
     fecha_conciliado_cliente = models.DateField(blank=True, null=True)
     comentario_facturador = models.TextField(blank=True, null=True)
 
-    # coordinador podas
+    # coordinador podas y estaditicas lpu/apu
     fecha_envio_acta_smu = models.DateField(blank=True, null=True)
     comentario_acta = models.TextField(blank=True, null=True)
     fecha_firma_acta_smu = models.DateField(blank=True, null=True)

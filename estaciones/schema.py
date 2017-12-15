@@ -50,7 +50,7 @@ query {
 
 '''
 query {
-  estacion(id:ID) {
+  estacion(pk:ID) {
     id
     nombre
     ubicacion
@@ -184,7 +184,7 @@ class UpdateEstacion(graphene.Mutation):
 '''
 mutation {
   updateEstacion(
-    id: ID,
+    pk: ID,
     nombre: " ",
     ubicacion: " ",
     region: " ",
@@ -227,7 +227,7 @@ class DeleteEstacion(graphene.Mutation):
 
 '''
 mutation {
-  deleteEstacion(id:ID) {
+  deleteEstacion(pk:ID) {
     estacion {
       id
     }

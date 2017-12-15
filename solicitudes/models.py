@@ -11,11 +11,14 @@ class Solicitud(models.Model):
     analista_id = models.CharField(max_length=255, blank=True, null=True)
     analista = models.CharField(max_length=255, blank=True, null=True)
     tas = models.CharField(max_length=255, blank=True, null=True)
-    estacion = models.ForeignKey(Estacion, blank=True, null=True, related_name='solicitudes')
-    subsistema = models.ForeignKey(Subsistema,  blank=True, null=True, related_name='solicitudes')
+    estacion = models.ForeignKey(Estacion, on_delete=models.CASCADE,
+                                    blank=True, null=True, related_name='solicitudes')
+    subsistema = models.ForeignKey(Subsistema, on_delete=models.CASCADE,
+                                    blank=True, null=True, related_name='solicitudes')
     suministros = models.ManyToManyField(Suministro, blank=True, related_name='solicitudes')
     servicios = models.ManyToManyField(Servicio, blank=True, related_name='solicitudes')
-    prioridad = models.CharField(max_length=255, blank=True, null=True, choices=choices.PRIORIDAD_CHOICES)
+    prioridad = models.CharField(max_length=255, blank=True, null=True,
+                                    choices=choices.PRIORIDAD_CHOICES)
     estado_solicitud = models.BooleanField(default=False)
 
     estado = models.BooleanField(default=True, editable=False)

@@ -3,7 +3,8 @@ from subsistemas.models import Subsistema
 
 class Suministro(models.Model):
     nombre = models.CharField(max_length=255, unique=True)
-    subsistema = models.ForeignKey(Subsistema,  blank=True, null=True, related_name='suministros')
+    subsistema = models.ForeignKey(Subsistema, on_delete=models.CASCADE,
+                                    blank=True, null=True, related_name='suministros')
     marca = models.CharField(max_length=255, blank=True, null=True)
     referencia = models.CharField(max_length=255, blank=True, null=True)
     unidad = models.CharField(max_length=255, blank=True, null=True)

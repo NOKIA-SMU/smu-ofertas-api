@@ -3,7 +3,7 @@ ALTA = 'ALTA'
 MEDIA = 'MEDIA'
 BAJA = 'BAJA'
 PRIORIDAD_CHOICES = (
-    (ALTA, 'Alta'),
+    (ALTA, 'ALTA'),
     (MEDIA, 'MEDIA'),
     (BAJA, 'BAJA'),
 )

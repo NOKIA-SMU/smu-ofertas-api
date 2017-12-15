@@ -6,7 +6,7 @@ from subsistemas.schema import SubsistemaQuery, SubsistemaMutation
 from suministros.schema import SuministroQuery
 from servicios.schema import ServicioQuery
 from solicitudes.schema import SolicitudQuery, SolicitudMutation
-from ofertas.schema import OfertaQuery
+from ofertas.schema import OfertaQuery, OfertaMutation
 
 class RootQuery(
             TokenQuery,
@@ -25,6 +25,7 @@ class RootMutation(
         EstacionMutation,
         SubsistemaMutation,
         SolicitudMutation,
+        OfertaMutation,
         graphene.ObjectType):
     pass
 
