@@ -17,6 +17,7 @@ class Oferta(models.Model):
     servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE,
                                     blank=True, null=True, related_name='ofertas')
     cantidad = models.PositiveIntegerField(blank=True, null=True)
+    comentario = models.TextField(blank=True, null=True)
     tipo_oferta = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.TIPO_OFERTA_CHOICES)
     tarea = models.CharField(max_length=255, blank=True, null=True)
@@ -90,6 +91,11 @@ class Oferta(models.Model):
     def __str__(self):
         return str(self.id)
 
+    # def save(self, *args, **kwargs):
+    #     if self.fecha_recibido_ods:
+    #         self.semana_recibido_ods = self.fecha_recibido_ods.isocalendar()[1]
+    #     super(Oferta, self).save(*args, **kwargs)
+
     @receiver(m2m_changed, sender=Solicitud.suministros.through)
     def create_oferta_suministros(sender, instance, action, **kwargs):
         if action:
@@ -97,8 +103,10 @@ class Oferta(models.Model):
                 for suministro in instance.suministros.all():
                     oferta, new = Oferta.objects.get_or_create(solicitud=instance,
                                                                suministro=suministro,
-                                                               cantidad=suministro.cantidad
                                                                )
+                    oferta.cantidad=suministro.cantidad
+                    oferta.comentario=suministro.comentario
+                    oferta.save()
 
     @receiver(post_save, sender=Solicitud)
     def save_oferta_suministros(sender, instance, **kwargs):
@@ -106,8 +114,10 @@ class Oferta(models.Model):
             for suministro in instance.suministros.all():
                 oferta, new = Oferta.objects.get_or_create(solicitud=instance,
                                                            suministro=suministro,
-                                                           cantidad=suministro.cantidad
                                                            )
+                oferta.cantidad=suministro.cantidad
+                oferta.comentario=suministro.comentario
+                oferta.save()
 
     @receiver(m2m_changed, sender=Solicitud.servicios.through)
     def create_oferta_servicios(sender, instance, action, **kwargs):
@@ -116,8 +126,10 @@ class Oferta(models.Model):
                 for servicio in instance.servicios.all():
                     oferta, new = Oferta.objects.get_or_create(solicitud=instance,
                                                                servicio=servicio,
-                                                               cantidad=servicio.cantidad
                                                                )
+                    oferta.cantidad=servicio.cantidad
+                    oferta.comentario=servicio.comentario
+                    oferta.save()
 
     @receiver(post_save, sender=Solicitud)
     def save_oferta_servicios(sender, instance, **kwargs):
@@ -125,5 +137,7 @@ class Oferta(models.Model):
             for servicio in instance.servicios.all():
                 oferta, new = Oferta.objects.get_or_create(solicitud=instance,
                                                            servicio=servicio,
-                                                           cantidad=servicio.cantidad
                                                            )
+                oferta.cantidad=servicio.cantidad
+                oferta.comentario=servicio.comentario
+                oferta.save()

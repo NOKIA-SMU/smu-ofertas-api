@@ -1,10 +1,9 @@
 import graphene
-from users.schema import UserMutation
 from tokens.schema import TokenQuery, TokenMutation
 from estaciones.schema import EstacionQuery, EstacionMutation
 from subsistemas.schema import SubsistemaQuery, SubsistemaMutation
-from suministros.schema import SuministroQuery
-from servicios.schema import ServicioQuery
+from suministros.schema import SuministroQuery, SuministroMutation
+from servicios.schema import ServicioQuery, ServicioMutation
 from solicitudes.schema import SolicitudQuery, SolicitudMutation
 from ofertas.schema import OfertaQuery, OfertaMutation
 
@@ -20,10 +19,11 @@ class RootQuery(
     pass
 
 class RootMutation(
-        UserMutation,
         TokenMutation,
         EstacionMutation,
         SubsistemaMutation,
+        SuministroMutation,
+        ServicioMutation,
         SolicitudMutation,
         OfertaMutation,
         graphene.ObjectType):

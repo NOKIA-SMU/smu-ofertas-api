@@ -1,35 +1,53 @@
 import graphene
+from graphql import GraphQLError
 from graphene_django.types import DjangoObjectType
 from .models import Subsistema
+from tokens.models import Token
 
 class SubsistemaType(DjangoObjectType):
     class Meta:
         model = Subsistema
 
 class SubsistemaQuery(graphene.ObjectType):
-    subsistemas = graphene.List(SubsistemaType)
+    subsistemas = graphene.List(SubsistemaType,
+                                uid=graphene.String(),
+                                credential=graphene.String())
     subsistema = graphene.Field(SubsistemaType,
-                              id=graphene.Int(),
-                              nombre=graphene.String())
+                              pk=graphene.ID(),
+                              uid=graphene.String(),
+                              credential=graphene.String())
 
     def resolve_subsistemas(self, info, **kwargs):
+        uid = kwargs.get('uid')
+        credential = kwargs.get('credential')
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
         return Subsistema.objects.all()
 
     def resolve_subsistema(self, info, **kwargs):
-        id = kwargs.get('id')
-        nombre = kwargs.get('nombre')
-
-        if id is not None:
-            return Subsistema.objects.get(pk=id)
-
-        if nombre is not None:
-            return Subsistema.objects.get(nombre=nombre)
-
+        uid = kwargs.get('uid')
+        credential = kwargs.get('credential')
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
+        pk = kwargs.get('pk')
+        if pk is not None:
+            return Subsistema.objects.get(pk=pk)
         return None
 
 '''
 query {
-  subsistemas {
+  subsistemas (
+    uid: String
+    credential: String
+  ) {
     id
     nombre
   }
@@ -38,7 +56,11 @@ query {
 
 '''
 query {
-  subsistema(id:ID) {
+  subsistema(
+    pk: ID
+    uid: String
+    credential: String
+  ) {
     id
     nombre
   }
@@ -47,13 +69,25 @@ query {
 
 class CreateSubsistema(graphene.Mutation):
     class Arguments:
-        nombre = graphene.String(required=True)
+        nombre = graphene.String()
+
+        uid = graphene.String(required=True)
+        credential = graphene.String(required=True)
 
     subsistema = graphene.Field(SubsistemaType)
     status = graphene.Int()
 
     def mutate(self, info,
-               nombre):
+               nombre,
+               uid,
+               credential,
+               ):
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
         subsistema = Subsistema.objects.create(
                nombre=nombre)
         return CreateSubsistema(subsistema=subsistema, status=200)
@@ -61,7 +95,9 @@ class CreateSubsistema(graphene.Mutation):
 '''
 mutation {
   createSubsistema(
-    nombre: " "
+    nombre: String
+    uid: String!
+    credential: String!
   ) {
     subsistema {
       id
@@ -74,25 +110,39 @@ mutation {
 
 class UpdateSubsistema(graphene.Mutation):
     class Arguments:
-        id = graphene.Int()
+        pk = graphene.ID(required=True)
         nombre = graphene.String()
+
+        uid = graphene.String(required=True)
+        credential = graphene.String(required=True)
 
     subsistema = graphene.Field(SubsistemaType)
     status = graphene.Int()
 
     def mutate(self, info,
-                id,
-                nombre):
-        subsistema = Subsistema.objects.get(pk=id)
+                pk,
+                nombre,
+                uid,
+                credential,
+                ):
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
+        subsistema = Subsistema.objects.get(pk=pk)
         subsistema.nombre = nombre
         subsistema.save()
         return UpdateSubsistema(subsistema=subsistema, status=200)
 
 '''
 mutation {
-  updateSubsistema(
-    id: ID,
-    nombre: " ",
+  updateSubsistema (
+    pk: ID!
+    nombre: String
+    uid: String!
+    credential: String!
   ) {
     subsistema {
       id
@@ -105,19 +155,36 @@ mutation {
 
 class DeleteSubsistema(graphene.Mutation):
     class Arguments:
-        id = graphene.Int()
+        pk = graphene.ID(required=True)
+
+        uid = graphene.String(required=True)
+        credential = graphene.String(required=True)
 
     subsistema = graphene.Field(SubsistemaType)
     status = graphene.Int()
 
-    def mutate(self, info, id):
-        subsistema = Subsistema.objects.get(pk=id)
+    def mutate(self, info,
+                pk,
+                uid,
+                credential,
+                ):
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
+        subsistema = Subsistema.objects.get(pk=pk)
         subsistema.delete()
         return DeleteSubsistema(status=200)
 
 '''
 mutation {
-  deleteSubsistema(id:ID) {
+  deleteSubsistema(
+    pk: ID,
+    uid: " ",
+    credential: " ",
+  ) {
     subsistema {
       id
       nombre

@@ -17,13 +17,28 @@ class OfertaQuery(graphene.ObjectType):
                                 uid=graphene.String(),
                                 credential=graphene.String())
     oferta = graphene.Field(OfertaType,
-                              pk=graphene.Int(),
+                              pk=graphene.ID(),
                               uid=graphene.String(),
                               credential=graphene.String())
-    tipoOfertas = graphene.List(graphene.String,
+    tipoAcceso = graphene.List(graphene.String,
+                                uid=graphene.String(),
+                                credential=graphene.String())
+    naturalezaServicio = graphene.List(graphene.String,
+                                uid=graphene.String(),
+                                credential=graphene.String())
+    tipoOferta = graphene.List(graphene.String,
+                                uid=graphene.String(),
+                                credential=graphene.String())
+    tipoElemento = graphene.List(graphene.String,
                                 uid=graphene.String(),
                                 credential=graphene.String())
     modalidad = graphene.List(graphene.String,
+                                uid=graphene.String(),
+                                credential=graphene.String())
+    tipoAdquisicion = graphene.List(graphene.String,
+                                uid=graphene.String(),
+                                credential=graphene.String())
+    proveedor = graphene.List(graphene.String,
                                 uid=graphene.String(),
                                 credential=graphene.String())
     tipoRespuestaCliente = graphene.List(graphene.String,
@@ -64,7 +79,29 @@ class OfertaQuery(graphene.ObjectType):
             return Oferta.objects.get(pk=pk)
         return None
 
-    def resolve_tipoOfertas(self, info, **kwargs):
+    def resolve_tipoAcceso(self, info, **kwargs):
+        uid = kwargs.get('uid')
+        credential = kwargs.get('credential')
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
+        return dict(choices.TIPO_ACCESO_CHOICES)
+
+    def resolve_naturalezaServicio(self, info, **kwargs):
+        uid = kwargs.get('uid')
+        credential = kwargs.get('credential')
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
+        return dict(choices.NATURALEZA_SERVICIO_CHOICES)
+
+    def resolve_tipoOferta(self, info, **kwargs):
         uid = kwargs.get('uid')
         credential = kwargs.get('credential')
         try:
@@ -74,6 +111,17 @@ class OfertaQuery(graphene.ObjectType):
         except Token.DoesNotExist:
             raise GraphQLError('are you login?')
         return dict(choices.TIPO_OFERTA_CHOICES)
+
+    def resolve_tipoElemento(self, info, **kwargs):
+        uid = kwargs.get('uid')
+        credential = kwargs.get('credential')
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
+        return dict(choices.TIPO_ELEMENTO_CHOICES)
 
     def resolve_modalidad(self, info, **kwargs):
         uid = kwargs.get('uid')
@@ -85,6 +133,28 @@ class OfertaQuery(graphene.ObjectType):
         except Token.DoesNotExist:
             raise GraphQLError('are you login?')
         return dict(choices.MODALIDAD_CHOICES)
+
+    def resolve_tipoAdquisicion(self, info, **kwargs):
+        uid = kwargs.get('uid')
+        credential = kwargs.get('credential')
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
+        return dict(choices.TIPO_ADQUISICION_CHOICES)
+
+    def resolve_proveedor(self, info, **kwargs):
+        uid = kwargs.get('uid')
+        credential = kwargs.get('credential')
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
+        return dict(choices.PROVEEDOR_CHOICES)
 
     def resolve_tipoRespuestaCliente(self, info, **kwargs):
         uid = kwargs.get('uid')
@@ -133,8 +203,8 @@ class OfertaQuery(graphene.ObjectType):
 '''
 query {
   ofertas (
-    uid:" ",
-    credential:" ",
+    uid: String!
+    credential: String!
   ){
     id
     solicitud {
@@ -150,6 +220,7 @@ query {
       nombre
     }
     cantidad
+    comentario
     tipoOferta
     tarea
     descripcionTarea
@@ -197,9 +268,9 @@ query {
 '''
 query {
   oferta(
-    pk:ID,
-    uid:" ",
-    credential:" ",
+    pk: ID!
+    uid: String!
+    credential: String!
   ){
     solicitud {
       id
@@ -214,6 +285,7 @@ query {
       nombre
     }
     cantidad
+    comentario
     tipoOferta
     tarea
     descripcionTarea
@@ -260,8 +332,13 @@ query {
 
 '''
 query {
-  tipoOfertas
+  tipoAcceso
+  naturalezaServicio
+  tipoOferta
+  tipoElemento
   modalidad
+  tipoAdquisicion
+  proveedor
   tipoRespuestaCliente
   confirmacionRecibido
   subestadoOferta
@@ -269,205 +346,151 @@ query {
 }
 '''
 
-class CreateOferta(graphene.Mutation):
-    class Arguments:
-        # supervisor y analista
-        solicitud = graphene.ID()
-        suministro = graphene.ID()
-        servicio = graphene.ID()
-        cantidad = graphene.Int()
-        tipoOferta = graphene.String()
-        tarea = graphene.String()
-        descripcionTarea = graphene.String()
-        encargadoCliente = graphene.String()
-        fechaEjecucion = graphene.types.datetime.Date()
-        confirmacionRecibido = graphene.String()
-        comentarioSupervisor = graphene.String()
-        subestadoOferta = graphene.String()
-        estadoOferta = graphene.String()
-        # analista
-        usuario = graphene.String()
-        numeroOferta = graphene.String()
-        modalidad = graphene.String()
-        precioUnidadProveedor = graphene.Float()
-        precioTotalProveedor = graphene.Float()
-        precioUnidadVenta = graphene.Float()
-        precioTotalVenta = graphene.Float()
-        precioUnidadCliente = graphene.Float()
-        precioTotalCliente = graphene.Float()
-        margen = graphene.Int()
-        tipoAdquisicion = graphene.String()
-        fechaRecibidoCliente = graphene.types.datetime.Date()
-        fechaDespachoSupervisor = graphene.types.datetime.Date()
-        fechaDespachoCompras = graphene.types.datetime.Date()
-        fechaRespuestaCompras = graphene.types.datetime.Date()
-        fechaEnvioCliente = graphene.types.datetime.Date()
-        fechaRespuestaCliente = graphene.types.datetime.Date()
-        tipoRespuestaCliente = graphene.String()
-        po = graphene.String()
-        fechaPo = graphene.types.datetime.Date()
-        comentarioAnalista = graphene.String()
-
-        # almacenista
-        fechaEntregaAlmacen = graphene.types.datetime.Date()
-        comentarioAlmacenista = graphene.String()
-
-        # coordinador lpu/apu
-        comentarioCoordinador = graphene.String()
-
-        # facturador
-        valorConciliadoCliente = graphene.Float()
-        fechaConciliadoCliente = graphene.types.datetime.Date()
-        comentarioFacturador = graphene.String()
-
-        # coordinador podas y estaditicas lpu/apu
-        fechaEnvioActaSmu = graphene.types.datetime.Date()
-        comentarioActa = graphene.String()
-        fechaFirmaActaSmu = graphene.types.datetime.Date()
-
-        # estaditicas lpu/apu
-        fechaGrSmu = graphene.types.datetime.Date()
-
-        uid = graphene.String()
-        credential = graphene.String()
-
-    oferta = graphene.Field(OfertaType)
-    status = graphene.Int()
-
-    def mutate(self, info,
-               # supervisor y analista
-               solicitud,
-               suministro,
-               servicio,
-               cantidad,
-               tipoOferta,
-               tarea,
-               descripcionTarea,
-               encargadoCliente,
-               fechaEjecucion,
-               confirmacionRecibido,
-               comentarioSupervisor,
-               subestadoOferta,
-               estadoOferta,
-               # analista
-               usuario,
-               numeroOferta,
-               modalidad,
-               precioUnidadProveedor,
-               precioTotalProveedor,
-               precioUnidadVenta,
-               precioTotalVenta,
-               precioUnidadCliente,
-               precioTotalCliente,
-               margen,
-               tipoAdquisicion,
-               fechaRecibidoCliente,
-               fechaDespachoSupervisor,
-               fechaDespachoCompras,
-               fechaRespuestaCompras,
-               fechaEnvioCliente,
-               fechaRespuestaCliente,
-               tipoRespuestaCliente,
-               po,
-               fechaPo,
-               comentarioAnalista,
-
-               # almacenista
-               fechaEntregaAlmacen,
-               comentarioAlmacenista,
-
-               # coordinador lpu/apu
-               comentarioCoordinador,
-
-               # facturador
-               valorConciliadoCliente,
-               fechaConciliadoCliente,
-               comentarioFacturador,
-
-               # coordinador podas y estaditicas lpu/apu
-               fechaEnvioActaSmu,
-               comentarioActa,
-               fechaFirmaActaSmu,
-
-               # estaditicas lpu/apu
-               fechaGrSmu,
-
-               uid,
-               credential,
-               ):
-        try:
-            token = Token.objects.get(uid=uid)
-            if token.credential != credential:
-                raise GraphQLError('credential invalid')
-        except Token.DoesNotExist:
-            raise GraphQLError('are you login?')
-        oferta = Oferta.objects.create(
-            # supervisor y analista
-            solicitud=Solicitud.objects.get(pk=solicitud),
-            suministro=Suministro.objects.get(pk=suministro),
-            servicio=Servicio.objects.get(pk=servicio),
-            cantidad=cantidad,
-            tipo_oferta=tipoOferta,
-            tarea=tarea,
-            descripcion_tarea=descripcionTarea,
-            encargado_cliente=encargadoCliente,
-            fecha_ejecucion=fechaEjecucion,
-            confirmacion_recibido=confirmacionRecibido,
-            comentario_supervisor=comentarioSupervisor,
-            subestado_oferta=subestadoOferta,
-            estado_oferta=estadoOferta,
-            # analista
-            usuario=usuario,
-            numero_oferta=numeroOferta,
-            modalidad=modalidad,
-            precio_unidad_proveedor=precioUnidadProveedor,
-            precio_total_proveedor=precioTotalProveedor,
-            precio_unidad_venta=precioUnidadVenta,
-            precio_total_venta=precioTotalVenta,
-            precio_unidad_cliente=precioUnidadCliente,
-            precio_total_cliente=precioTotalCliente,
-            margen=margen,
-            tipo_adquisicion=tipoAdquisicion,
-            fecha_recibido_cliente=fechaRecibidoCliente,
-            fecha_despacho_supervisor=fechaDespachoSupervisor,
-            fecha_despacho_compras=fechaDespachoCompras,
-            fecha_respuesta_compras=fechaRespuestaCompras,
-            fecha_envio_cliente=fechaEnvioCliente,
-            fecha_respuesta_cliente=fechaRespuestaCliente,
-            tipo_respuesta_cliente=tipoRespuestaCliente,
-            po=po,
-            fecha_po=fechaPo,
-            comentario_analista=comentarioAnalista,
-
-            # almacenista
-            fecha_entrega_almacen=fechaEntregaAlmacen,
-            comentario_almacenista=comentarioAlmacenista,
-
-            # coordinador lpu/apu
-            comentario_coordinador=comentarioCoordinador,
-
-            # facturador
-            valor_conciliado_cliente=valorConciliadoCliente,
-            fecha_conciliado_cliente=fechaConciliadoCliente,
-            comentario_facturador=comentarioFacturador,
-
-            # coordinador podas y estaditicas lpu/apu
-            fecha_envio_acta_smu=fechaEnvioActaSmu,
-            comentario_acta=comentarioActa,
-            fecha_firma_acta_smu=fechaFirmaActaSmu,
-
-            # estaditicas lpu/apu
-            fecha_gr_smu=fechaGrSmu,
-               )
-        return CreateOferta(oferta=oferta, status=200)
+# class CreateOferta(graphene.relay.ClientIDMutation):
+#     class Input:
+#         # supervisor y analista
+#         solicitud = graphene.ID()
+#         suministro = graphene.ID()
+#         servicio = graphene.ID()
+#         cantidad = graphene.Int()
+#         comentario = graphene.String()
+#         tipoOferta = graphene.String()
+#         tarea = graphene.String()
+#         descripcionTarea = graphene.String()
+#         encargadoCliente = graphene.String()
+#         fechaEjecucion = graphene.types.datetime.Date()
+#         confirmacionRecibido = graphene.String()
+#         comentarioSupervisor = graphene.String()
+#         subestadoOferta = graphene.String()
+#         estadoOferta = graphene.String()
+#         # analista
+#         usuario = graphene.String()
+#         numeroOferta = graphene.String()
+#         modalidad = graphene.String()
+#         precioUnidadProveedor = graphene.Float()
+#         precioTotalProveedor = graphene.Float()
+#         precioUnidadVenta = graphene.Float()
+#         precioTotalVenta = graphene.Float()
+#         precioUnidadCliente = graphene.Float()
+#         precioTotalCliente = graphene.Float()
+#         margen = graphene.Int()
+#         tipoAdquisicion = graphene.String()
+#         fechaRecibidoCliente = graphene.types.datetime.Date()
+#         fechaDespachoSupervisor = graphene.types.datetime.Date()
+#         fechaDespachoCompras = graphene.types.datetime.Date()
+#         fechaRespuestaCompras = graphene.types.datetime.Date()
+#         fechaEnvioCliente = graphene.types.datetime.Date()
+#         fechaRespuestaCliente = graphene.types.datetime.Date()
+#         tipoRespuestaCliente = graphene.String()
+#         po = graphene.String()
+#         fechaPo = graphene.types.datetime.Date()
+#         comentarioAnalista = graphene.String()
+#
+#         # almacenista
+#         fechaEntregaAlmacen = graphene.types.datetime.Date()
+#         comentarioAlmacenista = graphene.String()
+#
+#         # coordinador lpu/apu
+#         comentarioCoordinador = graphene.String()
+#
+#         # facturador
+#         valorConciliadoCliente = graphene.Float()
+#         fechaConciliadoCliente = graphene.types.datetime.Date()
+#         comentarioFacturador = graphene.String()
+#
+#         # coordinador podas y estaditicas lpu/apu, y estaditicas lpu/apu
+#         fechaEnvioActaSmu = graphene.types.datetime.Date()
+#         comentarioActa = graphene.String()
+#         fechaFirmaActaSmu = graphene.types.datetime.Date()
+#
+#         # estaditicas lpu/apu
+#         fechaGrSmu = graphene.types.datetime.Date()
+#
+#         uid = graphene.String()
+#         credential = graphene.String()
+#
+#     oferta = graphene.Field(OfertaType)
+#     status = graphene.Int()
+#
+#     @classmethod
+#     def mutate_and_get_payload(cls, root, info, **input):
+#         try:
+#             token = Token.objects.get(uid=input.get('uid'))
+#             if token.credential != input.get('credential'):
+#                 raise GraphQLError('credential invalid')
+#         except Token.DoesNotExist:
+#             raise GraphQLError('are you login?')
+#         oferta = Oferta.objects.create(
+#         # supervisor y analista
+#         solicitud=Solicitud.objects.get(pk=input.get('solicitud')),
+#         suministro=Suministro.objects.get(pk=input.get('suministro')),
+#         servicio=Servicio.objects.get(pk=input.get('servicio')),
+#         cantidad=input.get('cantidad'),
+#         comentario=input.get('comentario'),
+#         tipo_oferta=input.get('tipoOferta'),
+#         tarea=input.get('tarea'),
+#         descripcion_tarea=input.get('descripcionTarea'),
+#         encargado_cliente=input.get('encargadoCliente'),
+#         fecha_ejecucion=input.get('fechaEjecucion'),
+#         confirmacion_recibido=input.get('confirmacionRecibido'),
+#         comentario_supervisor=input.get('comentarioSupervisor'),
+#         subestado_oferta=input.get('subestadoOferta'),
+#         estado_oferta=input.get('estadoOferta'),
+#
+#         # analista
+#         usuario=input.get('usuario'),
+#         numero_oferta=input.get('numeroOferta'),
+#         modalidad=input.get('modalidad'),
+#         precio_unidad_proveedor=input.get('precioUnidadProveedor'),
+#         precio_total_proveedor=input.get('precioTotalProveedor'),
+#         precio_unidad_venta=input.get('precioUnidadVenta'),
+#         precio_total_venta=input.get('precioTotalVenta'),
+#         precio_unidad_cliente=input.get('precioUnidadCliente'),
+#         precio_total_cliente=input.get('precioTotalCliente'),
+#         margen=input.get('margen'),
+#         tipo_adquisicion=input.get('tipoAdquisicion'),
+#         fecha_recibido_cliente=input.get('fechaRecibidoCliente'),
+#         fecha_despacho_supervisor=input.get('fechaDespachoSupervisor'),
+#         fecha_despacho_compras=input.get('fechaDespachoCompras'),
+#         fecha_respuesta_compras=input.get('fechaRespuestaCompras'),
+#         fecha_envio_cliente=input.get('fechaEnvioCliente'),
+#         fecha_respuesta_cliente=input.get('fechaRespuestaCliente'),
+#         tipo_respuesta_cliente=input.get('tipoRespuestaCliente'),
+#         po=input.get('po'),
+#         fecha_po=input.get('fechaPo'),
+#         comentario_analista=input.get('comentarioAnalista'),
+#
+#         # almacenista
+#         fecha_entrega_almacen=input.get('fechaEntregaAlmacen'),
+#         comentario_almacenista=input.get('comentarioAlmacenista'),
+#
+#         # coordinador lpu/apu
+#         comentario_coordinador=input.get('comentarioCoordinador'),
+#
+#         # facturador
+#         valor_conciliado_cliente=input.get('valorConciliadoCliente'),
+#         fecha_conciliado_cliente=input.get('fechaConciliadoCliente'),
+#         comentario_facturador=input.get('comentarioFacturador'),
+#
+#         # coordinador podas y estaditicas lpu/apu
+#         fecha_envio_acta_smu=input.get('fechaEnvioActaSmu'),
+#         comentario_acta=input.get('comentarioActa'),
+#         fecha_firma_acta_smu=fechaFirmaActaSmu,
+#
+#         # estaditicas lpu/apu
+#         fecha_gr_smu=input.get('fechaGrSmu'),
+#         )
+#         return CreateOferta(oferta=oferta, status=200)
 
 '''
 mutation {
   createOferta(
+    input: {
     solicitud: ID
     suministro: ID
     servicio: ID
     cantidad: Int
+    comentario: String
     tipoOferta: String
     tarea: String
     descripcionTarea: String
@@ -508,8 +531,9 @@ mutation {
     comentarioActa: String
     fechaFirmaActaSmu: Date
     fechaGrSmu: Date
-    uid: String
-    credential: String
+    uid: String!
+    credential: String!
+    }
   ) {
     oferta {
       id
@@ -523,6 +547,7 @@ mutation {
         id
       }
       cantidad
+      comentario
       tipoOferta
       tarea
       descripcionTarea
@@ -571,12 +596,13 @@ mutation {
 
 class UpdateOferta(graphene.relay.ClientIDMutation):
     class Input:
-        pk = graphene.ID()
+        pk = graphene.ID(required=True)
         # supervisor y analista
-        solicitud = graphene.ID()
+        solicitud = graphene.ID(required=True)
         suministro = graphene.ID()
         servicio = graphene.ID()
         cantidad = graphene.Int()
+        comentario = graphene.String()
         tipoOferta = graphene.String()
         tarea = graphene.String()
         descripcionTarea = graphene.String()
@@ -629,8 +655,8 @@ class UpdateOferta(graphene.relay.ClientIDMutation):
         # estaditicas lpu/apu
         fechaGrSmu = graphene.types.datetime.Date()
 
-        uid = graphene.String()
-        credential = graphene.String()
+        uid = graphene.String(required=True)
+        credential = graphene.String(required=True)
 
     oferta = graphene.Field(OfertaType)
     status = graphene.Int()
@@ -655,11 +681,13 @@ class UpdateOferta(graphene.relay.ClientIDMutation):
         except Servicio.DoesNotExist:
             oferta.servicio = None
         oferta.cantidad = input.get('cantidad')
+        oferta.comentario = input.get('comentario')
         oferta.tipo_oferta = input.get('tipoOferta')
         oferta.tarea = input.get('tarea')
         oferta.descripcion_tarea = input.get('descripcionTarea')
         oferta.encargado_cliente = input.get('encargadoCliente')
         oferta.fecha_ejecucion = input.get('fechaEjecucion')
+        print (oferta.fecha_ejecucion.isocalendar()[1])
         oferta.confirmacion_recibido = input.get('confirmacionRecibido')
         oferta.comentario_supervisor = input.get('comentarioSupervisor')
         oferta.subestado_oferta = input.get('subestadoOferta')
@@ -714,11 +742,12 @@ class UpdateOferta(graphene.relay.ClientIDMutation):
 mutation {
   updateOferta(
     input: {
-    pk: ID
-    solicitud: ID
+    pk: ID!
+    solicitud: ID!
     suministro: ID
     servicio: ID
     cantidad: Int
+    comentario: String
     tipoOferta: String
     tarea: String
     descripcionTarea: String
@@ -759,8 +788,8 @@ mutation {
     comentarioActa: String
     fechaFirmaActaSmu: Date
     fechaGrSmu: Date
-    uid: String
-    credential: String
+    uid: String!
+    credential: String!
     }
   ) {
     oferta {
@@ -775,6 +804,7 @@ mutation {
         id
       }
       cantidad
+      comentario
       tipoOferta
       tarea
       descripcionTarea
@@ -823,9 +853,10 @@ mutation {
 
 class DeleteOferta(graphene.Mutation):
     class Arguments:
-        pk = graphene.ID()
-        uid = graphene.String()
-        credential = graphene.String()
+        pk = graphene.ID(required=True)
+
+        uid = graphene.String(required=True)
+        credential = graphene.String(required=True)
 
     oferta = graphene.Field(OfertaType)
     status = graphene.Int()
@@ -848,9 +879,9 @@ class DeleteOferta(graphene.Mutation):
 '''
 mutation {
   deleteOferta(
-    pk: ID
-    uid: String
-    credential: String
+    pk: ID!
+    uid: String!
+    credential: String!
   ) {
     oferta {
       id
@@ -861,6 +892,6 @@ mutation {
 '''
 
 class OfertaMutation(graphene.ObjectType):
-    create_oferta = CreateOferta.Field()
+    # create_oferta = CreateOferta.Field()
     update_oferta = UpdateOferta.Field()
     delete_oferta = DeleteOferta.Field()

@@ -1,6 +1,8 @@
 import graphene
+from graphql import GraphQLError
 from graphene_django.types import DjangoObjectType
 from .models import Estacion
+from tokens.models import Token
 
 class EstacionType(DjangoObjectType):
     class Meta:
@@ -8,31 +10,47 @@ class EstacionType(DjangoObjectType):
 
 class EstacionQuery(graphene.ObjectType):
     estaciones = graphene.List(EstacionType,
-                              query=graphene.String())
+                              query=graphene.String(),
+                              uid=graphene.String(),
+                              credential=graphene.String())
     estacion = graphene.Field(EstacionType,
-                              id=graphene.Int(),
-                              nombre=graphene.String())
+                              pk=graphene.ID(),
+                              uid=graphene.String(),
+                              credential=graphene.String())
 
     def resolve_estaciones(self, info, query=None, **kwargs):
+        uid = kwargs.get('uid')
+        credential = kwargs.get('credential')
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
         if query:
             return Estacion.objects.filter(region=query)
         return Estacion.objects.all()
 
     def resolve_estacion(self, info, **kwargs):
-        id = kwargs.get('id')
-        nombre = kwargs.get('nombre')
-
-        if id is not None:
-            return Estacion.objects.get(pk=id)
-
-        if nombre is not None:
-            return Estacion.objects.get(nombre=nombre)
-
+        uid = kwargs.get('uid')
+        credential = kwargs.get('credential')
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
+        pk = kwargs.get('pk')
+        if pk is not None:
+            return Estacion.objects.get(pk=pk)
         return None
 
 '''
 query {
-  estaciones {
+  estaciones (
+    uid: String
+    credential: String
+  ) {
     id
     nombre
     ubicacion
@@ -50,7 +68,11 @@ query {
 
 '''
 query {
-  estacion(pk:ID) {
+  estacion (
+    pk: ID
+    uid: String
+    credential: String
+  ) {
     id
     nombre
     ubicacion
@@ -68,7 +90,7 @@ query {
 
 class CreateEstacion(graphene.Mutation):
     class Arguments:
-        nombre = graphene.String(required=True)
+        nombre = graphene.String()
         ubicacion = graphene.String()
         region = graphene.String()
         departamento = graphene.String()
@@ -78,6 +100,9 @@ class CreateEstacion(graphene.Mutation):
         longitud = graphene.Float()
         estructura = graphene.String()
         categoria = graphene.String()
+
+        uid = graphene.String(required=True)
+        credential = graphene.String(required=True)
 
     estacion = graphene.Field(EstacionType)
     status = graphene.Int()
@@ -92,7 +117,10 @@ class CreateEstacion(graphene.Mutation):
                latitud,
                longitud,
                estructura,
-               categoria):
+               categoria,
+               uid,
+               credential,
+               ):
         estacion = Estacion.objects.create(
                nombre=nombre,
                ubicacion=ubicacion,
@@ -109,17 +137,19 @@ class CreateEstacion(graphene.Mutation):
 
 '''
 mutation {
-  createEstacion(
-    nombre: " ",
-    ubicacion: " ",
-    region: " ",
-    departamento: " ",
-    ciudad: " ",
-    direccion: " ",
-    latitud: 0.0,
-    longitud: 0.0,
-    estructura: " ",
-    categoria: " ",
+  createEstacion (
+    nombre: String
+    ubicacion: String
+    region: String
+    departamento: String
+    ciudad: String
+    direccion: String
+    latitud: Float
+    longitud: Float
+    estructura: String
+    categoria: String
+    uid: String!
+    credential: String!
   ) {
     estacion {
       id
@@ -134,13 +164,14 @@ mutation {
       estructura
       categoria
     }
+    status
   }
 }
 '''
 
 class UpdateEstacion(graphene.Mutation):
     class Arguments:
-        id = graphene.Int()
+        pk = graphene.ID(required=True)
         nombre = graphene.String()
         ubicacion = graphene.String()
         region = graphene.String()
@@ -152,11 +183,14 @@ class UpdateEstacion(graphene.Mutation):
         estructura = graphene.String()
         categoria = graphene.String()
 
+        uid = graphene.String(required=True)
+        credential = graphene.String(required=True)
+
     estacion = graphene.Field(EstacionType)
     status = graphene.Int()
 
     def mutate(self, info,
-                id,
+                pk,
                 nombre,
                 ubicacion,
                 region,
@@ -166,8 +200,11 @@ class UpdateEstacion(graphene.Mutation):
                 latitud,
                 longitud,
                 estructura,
-                categoria):
-        estacion = Estacion.objects.get(pk=id)
+                categoria,
+                uid,
+                credential,
+                ):
+        estacion = Estacion.objects.get(pk=pk)
         estacion.nombre = nombre
         estacion.ubicacion = ubicacion
         estacion.region = region
@@ -183,18 +220,20 @@ class UpdateEstacion(graphene.Mutation):
 
 '''
 mutation {
-  updateEstacion(
-    pk: ID,
-    nombre: " ",
-    ubicacion: " ",
-    region: " ",
-    departamento: " ",
-    ciudad: " ",
-    direccion: " ",
-    latitud: " ",
-    longitud: " ",
-    estructura: " ",
-    categoria: " ",
+  updateEstacion (
+    pk: Int!
+    nombre: String
+    ubicacion: String
+    region: String
+    departamento: String
+    ciudad: String
+    direccion: String
+    latitud: Float
+    longitud: Float
+    estructura: String
+    categoria: String
+    uid: String!
+    credential: String!
   ) {
     estacion {
       id
@@ -209,28 +248,41 @@ mutation {
       estructura
       categoria
     }
+    status
   }
 }
 '''
 
 class DeleteEstacion(graphene.Mutation):
     class Arguments:
-        id = graphene.Int()
+        pk = graphene.ID(required=True)
+
+        uid = graphene.String(required=True)
+        credential = graphene.String(required=True)
 
     estacion = graphene.Field(EstacionType)
     status = graphene.Int()
 
-    def mutate(self, info, id):
-        estacion = Estacion.objects.get(pk=id)
+    def mutate(self, info,
+                pk,
+                uid,
+                credential,
+                ):
+        estacion = Estacion.objects.get(pk=pk)
         estacion.delete()
         return DeleteEstacion(status=200)
 
 '''
 mutation {
-  deleteEstacion(pk:ID) {
+  deleteEstacion(
+    pk: ID!
+    uid: String!
+    credential: String!
+  ) {
     estacion {
       id
     }
+    status
   }
 }
 '''

@@ -14,6 +14,7 @@ class OfertaAdmin(ImportExportModelAdmin):
     'suministro',
     'servicio',
     'cantidad',
+    'comentario',
     'tipo_oferta',
     'tarea',
     'descripcion_tarea',

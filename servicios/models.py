@@ -9,6 +9,7 @@ class Servicio(models.Model):
     referencia = models.CharField(max_length=255, blank=True, null=True)
     unidad = models.CharField(max_length=255, blank=True, null=True)
     cantidad = models.PositiveIntegerField(blank=True, null=True)
+    comentario = models.TextField(blank=True, null=True)
 
     estado = models.BooleanField(default=True, editable=False)
     subestado = models.BooleanField(default=False, editable=False)

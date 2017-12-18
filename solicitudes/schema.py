@@ -6,7 +6,6 @@ from estaciones.models import Estacion
 from subsistemas.models import Subsistema
 from suministros.models import Suministro
 from servicios.models import Servicio
-from tokens.schema import TokenType
 from tokens.models import Token
 from . import choices
 
@@ -65,7 +64,10 @@ class SolicitudQuery(graphene.ObjectType):
 
 '''
 query {
-  solicitudes {
+  solicitudes (
+    uid: " ",
+    credential: " ",
+  ) {
     id
     supervisorId
     supervisor
@@ -92,7 +94,11 @@ query {
 
 '''
 query {
-  solicitud(pk:ID) {
+  solicitud (
+    pk: ID,
+    uid: " ",
+    credential: " ",
+  ) {
     id
     supervisorId
     supervisor
@@ -126,10 +132,12 @@ query {
 class SuministroInput(graphene.InputObjectType):
     pk = graphene.ID()
     qty = graphene.Int()
+    comentario = graphene.String()
 
 class ServicioInput(graphene.InputObjectType):
     pk = graphene.ID()
     qty = graphene.Int()
+    comentario = graphene.String()
 
 class CreateSolicitud(graphene.Mutation):
     class Arguments:
@@ -144,8 +152,9 @@ class CreateSolicitud(graphene.Mutation):
         servicios = graphene.List(ServicioInput)
         prioridad = graphene.String()
         estadoSolicitud = graphene.Boolean()
-        uid = graphene.String()
-        credential = graphene.String()
+
+        uid = graphene.String(required=True)
+        credential = graphene.String(required=True)
 
     solicitud = graphene.Field(SolicitudType)
     status = graphene.Int()
@@ -185,18 +194,20 @@ class CreateSolicitud(graphene.Mutation):
         for i in suministros:
             suministro = Suministro.objects.get(pk=i['pk'])
             suministro.cantidad = i['qty']
+            suministro.comentario = i['comentario']
             suministro.save()
             solicitud.suministros.add(suministro)
         for i in servicios:
             servicio = Servicio.objects.get(pk=i['pk'])
             servicio.cantidad = i['qty']
+            servicio.comentario = i['comentario']
             servicio.save()
             solicitud.servicios.add(servicio)
         return CreateSolicitud(solicitud=solicitud, status=200)
 
 '''
 mutation {
-  createSolicitud(
+  createSolicitud (
     supervisorId: " ",
     supervisor: " ",
     analistaId: " ",
@@ -238,7 +249,7 @@ mutation {
 
 class UpdateSolicitud(graphene.Mutation):
     class Arguments:
-        pk = graphene.ID()
+        pk = graphene.ID(required=True)
         supervisorId = graphene.String()
         supervisor = graphene.String()
         analistaId = graphene.String()
@@ -250,8 +261,9 @@ class UpdateSolicitud(graphene.Mutation):
         servicios = graphene.List(ServicioInput)
         prioridad = graphene.String()
         estadoSolicitud = graphene.Boolean()
-        uid = graphene.String()
-        credential = graphene.String()
+
+        uid = graphene.String(required=True)
+        credential = graphene.String(required=True)
 
     solicitud = graphene.Field(SolicitudType)
     status = graphene.Int()
@@ -289,11 +301,13 @@ class UpdateSolicitud(graphene.Mutation):
         for i in suministros:
             suministro = Suministro.objects.get(pk=i['pk'])
             suministro.cantidad = i['qty']
+            suministro.comentario = i['comentario']
             suministro.save()
             solicitud.suministros.add(suministro)
         for i in servicios:
             servicio = Servicio.objects.get(pk=i['pk'])
             servicio.cantidad = i['qty']
+            servicio.comentario = i['comentario']
             servicio.save()
             solicitud.servicios.add(servicio)
         solicitud.prioridad = prioridad
@@ -303,7 +317,7 @@ class UpdateSolicitud(graphene.Mutation):
 
 '''
 mutation {
-  updateSolicitud(
+  updateSolicitud (
     pk: ID,
     supervisorId: " ",
     supervisor: " ",
@@ -316,7 +330,7 @@ mutation {
     servicios: [{pk:ID, qty:Int}],
     prioridad: " ",
     estadoSolicitud: Boolean,
-    uid:" ",
+    uid: " ",
     credential: " ",
   ) {
     solicitud {
@@ -348,9 +362,10 @@ mutation {
 
 class DeleteSolicitud(graphene.Mutation):
     class Arguments:
-        pk = graphene.ID()
-        uid = graphene.String()
-        credential = graphene.String()
+        pk = graphene.ID(required=True)
+
+        uid = graphene.String(required=True)
+        credential = graphene.String(required=True)
 
     solicitud = graphene.Field(SolicitudType)
     status = graphene.Int()
@@ -372,9 +387,9 @@ class DeleteSolicitud(graphene.Mutation):
 
 '''
 mutation {
-  deleteSolicitud(
-    pk:ID,
-    uid:" ",
+  deleteSolicitud (
+    pk: ID,
+    uid: " ",
     credential: " ",
   ) {
     solicitud {

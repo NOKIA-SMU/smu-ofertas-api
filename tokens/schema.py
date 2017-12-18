@@ -21,8 +21,8 @@ class TokenType(DjangoObjectType):
 class TokenQuery(graphene.ObjectType):
     tokens = graphene.List(TokenType)
     token = graphene.Field(TokenType,
-                              uid=graphene.String(),
-                              credential=graphene.String())
+                           uid=graphene.String(),
+                           credential=graphene.String())
 
     def resolve_tokens(self, info, **kwargs):
         return Token.objects.all()
@@ -30,7 +30,6 @@ class TokenQuery(graphene.ObjectType):
     def resolve_token(self, info, **kwargs):
         uid = kwargs.get('uid')
         credential = kwargs.get('credential')
-
         if uid is not None:
             return Token.objects.get(uid=uid)
         return None
