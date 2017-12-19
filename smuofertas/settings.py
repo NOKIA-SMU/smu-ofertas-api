@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'suministros.apps.SuministrosConfig',
     'servicios.apps.ServiciosConfig',
     'solicitudes.apps.SolicitudesConfig',
+    'ordenes.apps.OrdenesConfig',
     'ofertas.apps.OfertasConfig',
     # dependencies
     'import_export',

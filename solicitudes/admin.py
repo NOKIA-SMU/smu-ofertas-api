@@ -16,8 +16,8 @@ class SolicitudAdmin(ImportExportModelAdmin):
     'tas',
     'estacion',
     'subsistema',
-    'all_suministros',
-    'all_servicios',
+    # 'all_suministros',
+    # 'all_servicios',
     'prioridad',
     'estado_solicitud',
     )
@@ -27,8 +27,8 @@ class SolicitudAdmin(ImportExportModelAdmin):
     search_fields = [
     'id',
     ]
-    def all_suministros(self, obj):
-        return "\n".join([suministro.nombre for suministro in obj.suministros.all()])
-
-    def all_servicios(self, obj):
-        return "\n".join([servicio.nombre for servicio in obj.servicios.all()])
+    # def all_suministros(self, obj):
+    #     return "\n".join([suministro.nombre for suministro in obj.suministros.all()])
+    #
+    # def all_servicios(self, obj):
+    #     return "\n".join([servicio.nombre for servicio in obj.servicios.all()])

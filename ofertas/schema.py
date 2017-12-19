@@ -2,7 +2,7 @@ import graphene
 from graphql import GraphQLError
 from graphene_django.types import DjangoObjectType
 from .models import Oferta
-from solicitudes.models import Solicitud
+from ordenes.models import OrdenSuministro, OrdenServicio
 from suministros.models import Suministro
 from servicios.models import Servicio
 from tokens.models import Token
@@ -415,70 +415,70 @@ query {
 #     @classmethod
 #     def mutate_and_get_payload(cls, root, info, **input):
 #         try:
-#             token = Token.objects.get(uid=input.get('uid'))
-#             if token.credential != input.get('credential'):
+#             token = Token.objects.get(uid=uid'))
+#             if token.credential != credential'):
 #                 raise GraphQLError('credential invalid')
 #         except Token.DoesNotExist:
 #             raise GraphQLError('are you login?')
 #         oferta = Oferta.objects.create(
 #         # supervisor y analista
-#         solicitud=Solicitud.objects.get(pk=input.get('solicitud')),
-#         suministro=Suministro.objects.get(pk=input.get('suministro')),
-#         servicio=Servicio.objects.get(pk=input.get('servicio')),
-#         cantidad=input.get('cantidad'),
-#         comentario=input.get('comentario'),
-#         tipo_oferta=input.get('tipoOferta'),
-#         tarea=input.get('tarea'),
-#         descripcion_tarea=input.get('descripcionTarea'),
-#         encargado_cliente=input.get('encargadoCliente'),
-#         fecha_ejecucion=input.get('fechaEjecucion'),
-#         confirmacion_recibido=input.get('confirmacionRecibido'),
-#         comentario_supervisor=input.get('comentarioSupervisor'),
-#         subestado_oferta=input.get('subestadoOferta'),
-#         estado_oferta=input.get('estadoOferta'),
+#         solicitud=Solicitud.objects.get(pk=solicitud')),
+#         suministro=Suministro.objects.get(pk=suministro')),
+#         servicio=Servicio.objects.get(pk=servicio')),
+#         cantidad=cantidad'),
+#         comentario=comentario'),
+#         tipo_oferta=tipoOferta'),
+#         tarea=tarea'),
+#         descripcion_tarea=descripcionTarea'),
+#         encargado_cliente=encargadoCliente'),
+#         fecha_ejecucion=fechaEjecucion'),
+#         confirmacion_recibido=confirmacionRecibido'),
+#         comentario_supervisor=comentarioSupervisor'),
+#         subestado_oferta=subestadoOferta'),
+#         estado_oferta=estadoOferta'),
 #
 #         # analista
-#         usuario=input.get('usuario'),
-#         numero_oferta=input.get('numeroOferta'),
-#         modalidad=input.get('modalidad'),
-#         precio_unidad_proveedor=input.get('precioUnidadProveedor'),
-#         precio_total_proveedor=input.get('precioTotalProveedor'),
-#         precio_unidad_venta=input.get('precioUnidadVenta'),
-#         precio_total_venta=input.get('precioTotalVenta'),
-#         precio_unidad_cliente=input.get('precioUnidadCliente'),
-#         precio_total_cliente=input.get('precioTotalCliente'),
-#         margen=input.get('margen'),
-#         tipo_adquisicion=input.get('tipoAdquisicion'),
-#         fecha_recibido_cliente=input.get('fechaRecibidoCliente'),
-#         fecha_despacho_supervisor=input.get('fechaDespachoSupervisor'),
-#         fecha_despacho_compras=input.get('fechaDespachoCompras'),
-#         fecha_respuesta_compras=input.get('fechaRespuestaCompras'),
-#         fecha_envio_cliente=input.get('fechaEnvioCliente'),
-#         fecha_respuesta_cliente=input.get('fechaRespuestaCliente'),
-#         tipo_respuesta_cliente=input.get('tipoRespuestaCliente'),
-#         po=input.get('po'),
-#         fecha_po=input.get('fechaPo'),
-#         comentario_analista=input.get('comentarioAnalista'),
+#         usuario=usuario'),
+#         numero_oferta=numeroOferta'),
+#         modalidad=modalidad'),
+#         precio_unidad_proveedor=precioUnidadProveedor'),
+#         precio_total_proveedor=precioTotalProveedor'),
+#         precio_unidad_venta=precioUnidadVenta'),
+#         precio_total_venta=precioTotalVenta'),
+#         precio_unidad_cliente=precioUnidadCliente'),
+#         precio_total_cliente=precioTotalCliente'),
+#         margen=margen'),
+#         tipo_adquisicion=tipoAdquisicion'),
+#         fecha_recibido_cliente=fechaRecibidoCliente'),
+#         fecha_despacho_supervisor=fechaDespachoSupervisor'),
+#         fecha_despacho_compras=fechaDespachoCompras'),
+#         fecha_respuesta_compras=fechaRespuestaCompras'),
+#         fecha_envio_cliente=fechaEnvioCliente'),
+#         fecha_respuesta_cliente=fechaRespuestaCliente'),
+#         tipo_respuesta_cliente=tipoRespuestaCliente'),
+#         po=po'),
+#         fecha_po=fechaPo'),
+#         comentario_analista=comentarioAnalista'),
 #
 #         # almacenista
-#         fecha_entrega_almacen=input.get('fechaEntregaAlmacen'),
-#         comentario_almacenista=input.get('comentarioAlmacenista'),
+#         fecha_entrega_almacen=fechaEntregaAlmacen'),
+#         comentario_almacenista=comentarioAlmacenista'),
 #
 #         # coordinador lpu/apu
-#         comentario_coordinador=input.get('comentarioCoordinador'),
+#         comentario_coordinador=comentarioCoordinador'),
 #
 #         # facturador
-#         valor_conciliado_cliente=input.get('valorConciliadoCliente'),
-#         fecha_conciliado_cliente=input.get('fechaConciliadoCliente'),
-#         comentario_facturador=input.get('comentarioFacturador'),
+#         valor_conciliado_cliente=valorConciliadoCliente'),
+#         fecha_conciliado_cliente=fechaConciliadoCliente'),
+#         comentario_facturador=comentarioFacturador'),
 #
 #         # coordinador podas y estaditicas lpu/apu
-#         fecha_envio_acta_smu=input.get('fechaEnvioActaSmu'),
-#         comentario_acta=input.get('comentarioActa'),
+#         fecha_envio_acta_smu=fechaEnvioActaSmu'),
+#         comentario_acta=comentarioActa'),
 #         fecha_firma_acta_smu=fechaFirmaActaSmu,
 #
 #         # estaditicas lpu/apu
-#         fecha_gr_smu=input.get('fechaGrSmu'),
+#         fecha_gr_smu=fechaGrSmu'),
 #         )
 #         return CreateOferta(oferta=oferta, status=200)
 
@@ -594,15 +594,12 @@ mutation {
 }
 '''
 
-class UpdateOferta(graphene.relay.ClientIDMutation):
-    class Input:
+class UpdateOferta(graphene.Mutation):
+    class Arguments:
         pk = graphene.ID(required=True)
         # supervisor y analista
-        solicitud = graphene.ID(required=True)
-        suministro = graphene.ID()
-        servicio = graphene.ID()
-        cantidad = graphene.Int()
-        comentario = graphene.String()
+        orden_suministro = graphene.ID()
+        orden_servicio = graphene.ID()
         tipoOferta = graphene.String()
         tarea = graphene.String()
         descripcionTarea = graphene.String()
@@ -661,79 +658,114 @@ class UpdateOferta(graphene.relay.ClientIDMutation):
     oferta = graphene.Field(OfertaType)
     status = graphene.Int()
 
-    @classmethod
-    def mutate_and_get_payload(cls, root, info, **input):
+    def mutate(self, info,
+                pk,
+                uid,
+                credential,
+                orden_suministro=None,
+                orden_servicio=None,
+                tipoOferta=None,
+                tarea=None,
+                descripcionTarea=None,
+                encargadoCliente=None,
+                fechaEjecucion=None,
+                confirmacionRecibido=None,
+                comentarioSupervisor=None,
+                subestadoOferta=None,
+                estadoOferta=None,
+                usuario=None,
+                numeroOferta=None,
+                modalidad=None,
+                precioUnidadProveedor=None,
+                precioTotalProveedor=None,
+                precioUnidadVenta=None,
+                precioTotalVenta=None,
+                precioUnidadCliente=None,
+                precioTotalCliente=None,
+                margen=None,
+                tipoAdquisicion=None,
+                fechaRecibidoCliente=None,
+                fechaDespachoSupervisor=None,
+                fechaDespachoCompras=None,
+                fechaRespuestaCompras=None,
+                fechaEnvioCliente=None,
+                fechaRespuestaCliente=None,
+                tipoRespuestaCliente=None,
+                po=None,
+                fechaPo=None,
+                comentarioAnalista=None,
+                fechaEntregaAlmacen=None,
+                comentarioAlmacenista=None,
+                comentarioCoordinador=None,
+                valorConciliadoCliente=None,
+                fechaConciliadoCliente=None,
+                comentarioFacturador=None,
+                fechaEnvioActaSmu=None,
+                comentarioActa=None,
+                fechaFirmaActaSmu=None,
+                fechaGrSmu=None,
+                ):
         try:
-            token = Token.objects.get(uid=input.get('uid'))
-            if token.credential != input.get('credential'):
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
                 raise GraphQLError('credential invalid')
         except Token.DoesNotExist:
             raise GraphQLError('are you login?')
-        oferta = Oferta.objects.get(pk=input.get('pk'))
+        oferta = Oferta.objects.get(pk=pk)
         # supervisor y analista
-        oferta.solicitud = Solicitud.objects.get(pk=input.get('solicitud'))
-        try:
-            oferta.suministro = Suministro.objects.get(pk=input.get('suministro'))
-        except Suministro.DoesNotExist:
-            oferta.suministro = None
-        try:
-            oferta.servicio = Servicio.objects.get(pk=input.get('servicio'))
-        except Servicio.DoesNotExist:
-            oferta.servicio = None
-        oferta.cantidad = input.get('cantidad')
-        oferta.comentario = input.get('comentario')
-        oferta.tipo_oferta = input.get('tipoOferta')
-        oferta.tarea = input.get('tarea')
-        oferta.descripcion_tarea = input.get('descripcionTarea')
-        oferta.encargado_cliente = input.get('encargadoCliente')
-        oferta.fecha_ejecucion = input.get('fechaEjecucion')
-        print (oferta.fecha_ejecucion.isocalendar()[1])
-        oferta.confirmacion_recibido = input.get('confirmacionRecibido')
-        oferta.comentario_supervisor = input.get('comentarioSupervisor')
-        oferta.subestado_oferta = input.get('subestadoOferta')
-        oferta.estado_oferta = input.get('estadoOferta')
+        oferta.orden_suministro = OrdenSuministro.objects.get(pk=orden_suministro)
+        oferta.orden_servicio = OrdenServicio.objects.get(pk=orden_servicio)
+        oferta.tipo_oferta = tipoOferta
+        oferta.tarea = tarea
+        oferta.descripcion_tarea = descripcionTarea
+        oferta.encargado_cliente = encargadoCliente
+        oferta.fecha_ejecucion = fechaEjecucion
+        oferta.confirmacion_recibido = confirmacionRecibido
+        oferta.comentario_supervisor = comentarioSupervisor
+        oferta.subestado_oferta = subestadoOferta
+        oferta.estado_oferta = estadoOferta
         # analista
-        oferta.usuario = input.get('usuario')
-        oferta.numero_oferta = input.get('numeroOferta')
-        oferta.modalidad = input.get('modalidad')
-        oferta.precio_unidad_proveedor = input.get('precioUnidadProveedor')
-        oferta.precio_total_proveedor = input.get('precioTotalProveedor')
-        oferta.precio_unidad_venta = input.get('precioUnidadVenta')
-        oferta.precio_total_venta = input.get('precioTotalVenta')
-        oferta.precio_unidad_cliente = input.get('precioUnidadCliente')
-        oferta.precio_total_cliente = input.get('precioTotalCliente')
-        oferta.margen = input.get('margen')
-        oferta.tipo_adquisicion = input.get('tipoAdquisicion')
-        oferta.fecha_recibido_cliente = input.get('fechaRecibidoCliente')
-        oferta.fecha_despacho_supervisor = input.get('fechaDespachoSupervisor')
-        oferta.fecha_despacho_compras = input.get('fechaDespachoCompras')
-        oferta.fecha_respuesta_compras = input.get('fechaRespuestaCompras')
-        oferta.fecha_envio_cliente = input.get('fechaEnvioCliente')
-        oferta.fecha_respuesta_cliente = input.get('fechaRespuestaCliente')
-        oferta.tipo_respuesta_cliente = input.get('tipoRespuestaCliente')
-        oferta.po = input.get('po')
-        oferta.fecha_po = input.get('fechaPo')
-        oferta.comentario_analista = input.get('comentarioAnalista')
+        oferta.usuario = usuario
+        oferta.numero_oferta = numeroOferta
+        oferta.modalidad = modalidad
+        oferta.precio_unidad_proveedor = precioUnidadProveedor
+        oferta.precio_total_proveedor = precioTotalProveedor
+        oferta.precio_unidad_venta = precioUnidadVenta
+        oferta.precio_total_venta = precioTotalVenta
+        oferta.precio_unidad_cliente = precioUnidadCliente
+        oferta.precio_total_cliente = precioTotalCliente
+        oferta.margen = margen
+        oferta.tipo_adquisicion = tipoAdquisicion
+        oferta.fecha_recibido_cliente = fechaRecibidoCliente
+        oferta.fecha_despacho_supervisor = fechaDespachoSupervisor
+        oferta.fecha_despacho_compras = fechaDespachoCompras
+        oferta.fecha_respuesta_compras = fechaRespuestaCompras
+        oferta.fecha_envio_cliente = fechaEnvioCliente
+        oferta.fecha_respuesta_cliente = fechaRespuestaCliente
+        oferta.tipo_respuesta_cliente = tipoRespuestaCliente
+        oferta.po = po
+        oferta.fecha_po = fechaPo
+        oferta.comentario_analista = comentarioAnalista
 
         # almacenista
-        oferta.fecha_entrega_almacen = input.get('fechaEntregaAlmacen')
-        oferta.comentario_almacenista = input.get('comentarioAlmacenista')
+        oferta.fecha_entrega_almacen = fechaEntregaAlmacen
+        oferta.comentario_almacenista = comentarioAlmacenista
 
         # coordinador lpu/apu
-        oferta.comentario_coordinador = input.get('comentarioCoordinador')
+        oferta.comentario_coordinador = comentarioCoordinador
 
         # facturador
-        oferta.valor_conciliado_cliente = input.get('valorConciliadoCliente')
-        oferta.fecha_conciliado_cliente = input.get('fechaConciliadoCliente')
-        oferta.comentario_facturador = input.get('comentarioFacturador')
+        oferta.valor_conciliado_cliente = valorConciliadoCliente
+        oferta.fecha_conciliado_cliente = fechaConciliadoCliente
+        oferta.comentario_facturador = comentarioFacturador
 
         # coordinador podas y estaditicas lpu/apu
-        oferta.fecha_envio_acta_smu = input.get('fechaEnvioActaSmu')
-        oferta.comentario_acta = input.get('comentarioActa')
-        oferta.fecha_firma_acta_smu = input.get('fechaFirmaActaSmu')
+        oferta.fecha_envio_acta_smu = fechaEnvioActaSmu
+        oferta.comentario_acta = comentarioActa
+        oferta.fecha_firma_acta_smu = fechaFirmaActaSmu
 
         # estaditicas lpu/apu
-        oferta.fecha_gr_smu = input.get('fechaGrSmu')
+        oferta.fecha_gr_smu = fechaGrSmu
 
         oferta.save()
         return UpdateOferta(oferta=oferta, status=200)

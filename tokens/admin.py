@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import Token
 
 @admin.register(Token)
-class ProfileAdmin(admin.ModelAdmin):
+class TokenAdmin(admin.ModelAdmin):
     list_display = (
     'id',
     'uid',

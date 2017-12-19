@@ -2,8 +2,6 @@ from django.db import models
 from . import choices
 from estaciones.models import Estacion
 from subsistemas.models import Subsistema
-from suministros.models import Suministro
-from servicios.models import Servicio
 
 class Solicitud(models.Model):
     supervisor_id = models.CharField(max_length=255, blank=True, null=True)
@@ -15,8 +13,6 @@ class Solicitud(models.Model):
                                     blank=True, null=True, related_name='solicitudes')
     subsistema = models.ForeignKey(Subsistema, on_delete=models.CASCADE,
                                     blank=True, null=True, related_name='solicitudes')
-    suministros = models.ManyToManyField(Suministro, blank=True, related_name='solicitudes')
-    servicios = models.ManyToManyField(Servicio, blank=True, related_name='solicitudes')
     prioridad = models.CharField(max_length=255, blank=True, null=True,
                                     choices=choices.PRIORIDAD_CHOICES)
     estado_solicitud = models.BooleanField(default=False)

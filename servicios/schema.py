@@ -48,8 +48,8 @@ class ServicioQuery(graphene.ObjectType):
 '''
 query {
   servicios (
-    uid: " ",
-    credential: " ",
+    uid: String!
+    credential: String!
   ) {
     id
     nombre
@@ -60,9 +60,9 @@ query {
 '''
 query {
   servicio(
-    pk: ID
-    uid: " ",
-    credential: " ",
+    pk: ID!
+    uid: String!
+    credential: String!
   ) {
     id
     nombre
@@ -98,9 +98,9 @@ class CreateServicio(graphene.Mutation):
 '''
 mutation {
   createServicio (
-    nombre: " "
-    uid: " ",
-    credential: " ",
+    nombre: String
+    uid: String!
+    credential: String!
   ) {
     servicio {
       id
@@ -142,9 +142,9 @@ class UpdateServicio(graphene.Mutation):
 '''
 mutation {
   updateServicio (
-    pk: ID,
-    uid: " ",
-    credential: " ",
+    pk: ID!
+    uid: String!
+    credential: String!
   ) {
     servicio {
       id
@@ -183,9 +183,9 @@ class DeleteServicio(graphene.Mutation):
 '''
 mutation {
   deleteServicio (
-    pk: ID,
-    uid: " ",
-    credential: " ",
+    pk: ID!
+    uid: String!
+    credential: String!
   ) {
     servicio {
       id

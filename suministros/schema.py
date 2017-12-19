@@ -98,9 +98,9 @@ class CreateSuministro(graphene.Mutation):
 '''
 mutation {
   createSuministro(
-    nombre: " "
-    uid: " ",
-    credential: " ",
+    nombre: String
+    uid: String!
+    credential: String!
   ) {
     suministro {
       id
@@ -142,9 +142,10 @@ class UpdateSuministro(graphene.Mutation):
 '''
 mutation {
   updateSuministro (
-    pk: ID,
-    uid: " ",
-    credential: " ",
+    pk: ID!
+    nombre: String
+    uid: String!
+    credential: String!
   ) {
     suministro {
       id
@@ -183,9 +184,9 @@ class DeleteSuministro(graphene.Mutation):
 '''
 mutation {
   deleteSuministro(
-    pk: ID,
-    uid: " ",
-    credential: " ",
+    pk: ID!
+    uid: String!
+    credential: String!
   ) {
     suministro {
       id

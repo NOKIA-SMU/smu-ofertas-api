@@ -2,6 +2,7 @@ import graphene
 from graphql import GraphQLError
 from graphene_django.types import DjangoObjectType
 from .models import Solicitud
+from ordenes.models import OrdenSuministro, OrdenServicio
 from estaciones.models import Estacion
 from subsistemas.models import Subsistema
 from suministros.models import Suministro
@@ -26,7 +27,7 @@ class SolicitudQuery(graphene.ObjectType):
                                 credential=graphene.String())
 
     def resolve_solicitudes(self, info, **kwargs):
-        # print (info.context.META)
+        # print (info.context.META) looking for headers and more
         uid = kwargs.get('uid')
         credential = kwargs.get('credential')
         try:
@@ -65,8 +66,8 @@ class SolicitudQuery(graphene.ObjectType):
 '''
 query {
   solicitudes (
-    uid: " ",
-    credential: " ",
+    uid: String!
+    credential: String!
   ) {
     id
     supervisorId
@@ -80,11 +81,18 @@ query {
     subsistema {
         id
     }
-    suministros {
-        id
-    }
-    servicios {
-        id
+    ordenes {
+     id
+     suministro {
+      id
+      nombre
+     }
+     servicio {
+      id
+      nombre
+     }
+     cantidad
+     comentario
     }
     prioridad
     estadoSolicitud
@@ -95,9 +103,9 @@ query {
 '''
 query {
   solicitud (
-    pk: ID,
-    uid: " ",
-    credential: " ",
+    pk: ID!
+    uid: String!
+    credential: String!
   ) {
     id
     supervisorId
@@ -111,11 +119,18 @@ query {
     subsistema {
         id
     }
-    suministros {
-        id
-    }
-    servicios {
-        id
+    ordenes {
+     id
+     suministro {
+      id
+      nombre
+     }
+     servicio {
+      id
+      nombre
+     }
+     cantidad
+     comentario
     }
     prioridad
     estadoSolicitud
@@ -193,34 +208,42 @@ class CreateSolicitud(graphene.Mutation):
                )
         for i in suministros:
             suministro = Suministro.objects.get(pk=i['pk'])
-            suministro.cantidad = i['qty']
-            suministro.comentario = i['comentario']
-            suministro.save()
-            solicitud.suministros.add(suministro)
+            cantidad = i['qty']
+            comentario = i['comentario']
+            orden_suministro = OrdenSuministro.objects.create(
+                  solicitud=solicitud,
+                  suministro=suministro,
+                  cantidad=cantidad,
+                  comentario=comentario,
+                   )
         for i in servicios:
             servicio = Servicio.objects.get(pk=i['pk'])
-            servicio.cantidad = i['qty']
-            servicio.comentario = i['comentario']
-            servicio.save()
-            solicitud.servicios.add(servicio)
+            cantidad = i['qty']
+            comentario = i['comentario']
+            orden_servicio = OrdenServicio.objects.create(
+                  solicitud=solicitud,
+                  servicio=servicio,
+                  cantidad=cantidad,
+                  comentario=comentario,
+                   )
         return CreateSolicitud(solicitud=solicitud, status=200)
 
 '''
 mutation {
   createSolicitud (
-    supervisorId: " ",
-    supervisor: " ",
-    analistaId: " ",
-    analista: " ",
-    tas: " ",
-    estacion: ID,
-    subsistema: ID,
-    suministros: [{pk:ID, qty:Int}],
-    servicios: [{pk:ID, qty:Int}],
-    prioridad: " ",
-    estadoSolicitud: Boolean,
-    uid:" ",
-    credential: " ",
+    supervisorId: String
+    supervisor: String
+    analistaId: String
+    analista: String
+    tas: String
+    estacion: ID
+    subsistema: ID
+    suministros: [SuministroInput]
+    servicios: [ServicioInput]
+    prioridad: String
+    estadoSolicitud: Boolean
+    uid: String!
+    credential: String!
   ) {
     solicitud {
       id
@@ -233,11 +256,18 @@ mutation {
       subsistema {
         id
       }
-      suministros {
+      ordenes {
+       id
+       suministro {
         id
-      }
-      servicios {
+        nombre
+       }
+       servicio {
         id
+        nombre
+       }
+       cantidad
+       comentario
       }
       prioridad
       estadoSolicitud
@@ -300,16 +330,25 @@ class UpdateSolicitud(graphene.Mutation):
         solicitud.subsistema = Subsistema.objects.get(pk=subsistema)
         for i in suministros:
             suministro = Suministro.objects.get(pk=i['pk'])
-            suministro.cantidad = i['qty']
-            suministro.comentario = i['comentario']
-            suministro.save()
-            solicitud.suministros.add(suministro)
+            cantidad = i['qty']
+            comentario = i['comentario']
+            orden_suministro, new = OrdenSuministro.objects.get_or_create(solicitud=solicitud,
+                                                     suministro=suministro,
+                                                     )
+            orden_suministro.cantidad = cantidad
+            orden_suministro.comentario = comentario
+            orden_suministro.save()
         for i in servicios:
             servicio = Servicio.objects.get(pk=i['pk'])
-            servicio.cantidad = i['qty']
-            servicio.comentario = i['comentario']
-            servicio.save()
-            solicitud.servicios.add(servicio)
+            cantidad = i['qty']
+            comentario = i['comentario']
+            print (servicio)
+            orden_servicio, new = OrdenServicio.objects.get_or_create(solicitud=solicitud,
+                                                     servicio=servicio,
+                                                     )
+            orden_servicio.cantidad = cantidad
+            orden_servicio.comentario = comentario
+            orden_servicio.save()
         solicitud.prioridad = prioridad
         solicitud.estado_solicitud = estadoSolicitud
         solicitud.save()
@@ -318,20 +357,20 @@ class UpdateSolicitud(graphene.Mutation):
 '''
 mutation {
   updateSolicitud (
-    pk: ID,
-    supervisorId: " ",
-    supervisor: " ",
-    analistaId: " ",
-    analista: " ",
-    tas: " ",
-    estacion: ID,
-    subsistema: ID,
-    suministros: [{pk:ID, qty:Int}],
-    servicios: [{pk:ID, qty:Int}],
-    prioridad: " ",
-    estadoSolicitud: Boolean,
-    uid: " ",
-    credential: " ",
+    pk: ID!
+    supervisorId: String
+    supervisor: String
+    analistaId: String
+    analista: String
+    tas: String
+    estacion: ID
+    subsistema: ID
+    suministros: [SuministroInput]
+    servicios: [ServicioInput]
+    prioridad: String
+    estadoSolicitud: Boolean
+    uid: String!
+    credential: String!
   ) {
     solicitud {
       id
@@ -346,11 +385,18 @@ mutation {
       subsistema {
         id
       }
-      suministros {
+      ordenes {
+       id
+       suministro {
         id
-      }
-      servicios {
+        nombre
+       }
+       servicio {
         id
+        nombre
+       }
+       cantidad
+       comentario
       }
       prioridad
       estadoSolicitud
@@ -388,9 +434,9 @@ class DeleteSolicitud(graphene.Mutation):
 '''
 mutation {
   deleteSolicitud (
-    pk: ID,
-    uid: " ",
-    credential: " ",
+    pk: ID!
+    uid: String!
+    credential: String!
   ) {
     solicitud {
       id

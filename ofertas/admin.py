@@ -10,11 +10,8 @@ class OfertaAdmin(ImportExportModelAdmin):
     list_display = (
     'id',
     # supervisor
-    'solicitud',
-    'suministro',
-    'servicio',
-    'cantidad',
-    'comentario',
+    'orden_suministro',
+    'orden_servicio',
     'tipo_oferta',
     'tarea',
     'descripcion_tarea',

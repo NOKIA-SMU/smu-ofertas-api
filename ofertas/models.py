@@ -6,18 +6,14 @@ from django.dispatch import receiver
 from . import choices
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from solicitudes.models import Solicitud
+from ordenes.models import OrdenSuministro, OrdenServicio
 
 class Oferta(models.Model):
     # supervisor y analista
-    solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE,
-                                    blank=True, null=True, related_name='ofertas')
-    suministro = models.ForeignKey(Suministro, on_delete=models.CASCADE,
-                                    blank=True, null=True, related_name='ofertas')
-    servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE,
-                                    blank=True, null=True, related_name='ofertas')
-    cantidad = models.PositiveIntegerField(blank=True, null=True)
-    comentario = models.TextField(blank=True, null=True)
+    orden_suministro = models.OneToOneField(OrdenSuministro, on_delete=models.CASCADE,
+                                        blank=True, null=True)
+    orden_servicio = models.OneToOneField(OrdenServicio, on_delete=models.CASCADE,
+                                        blank=True, null=True)
     tipo_oferta = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.TIPO_OFERTA_CHOICES)
     tarea = models.CharField(max_length=255, blank=True, null=True)
@@ -96,48 +92,22 @@ class Oferta(models.Model):
     #         self.semana_recibido_ods = self.fecha_recibido_ods.isocalendar()[1]
     #     super(Oferta, self).save(*args, **kwargs)
 
-    @receiver(m2m_changed, sender=Solicitud.suministros.through)
-    def create_oferta_suministros(sender, instance, action, **kwargs):
-        if action:
-            if instance.estado_solicitud == True:
-                for suministro in instance.suministros.all():
-                    oferta, new = Oferta.objects.get_or_create(solicitud=instance,
-                                                               suministro=suministro,
-                                                               )
-                    oferta.cantidad=suministro.cantidad
-                    oferta.comentario=suministro.comentario
-                    oferta.save()
+    @receiver(post_save, sender=OrdenSuministro)
+    def create_oferta_suministro(sender, instance, created, **kwargs):
+        if created and instance.solicitud.estado_solicitud:
+            oferta, new = Oferta.objects.get_or_create(orden_suministro=instance)
 
-    @receiver(post_save, sender=Solicitud)
-    def save_oferta_suministros(sender, instance, **kwargs):
-        if instance.estado_solicitud == True:
-            for suministro in instance.suministros.all():
-                oferta, new = Oferta.objects.get_or_create(solicitud=instance,
-                                                           suministro=suministro,
-                                                           )
-                oferta.cantidad=suministro.cantidad
-                oferta.comentario=suministro.comentario
-                oferta.save()
+    @receiver(post_save, sender=OrdenSuministro)
+    def save_oferta_suministro(sender, instance, **kwargs):
+        if instance.solicitud.estado_solicitud:
+            oferta, new = Oferta.objects.get_or_create(orden_suministro=instance)
 
-    @receiver(m2m_changed, sender=Solicitud.servicios.through)
-    def create_oferta_servicios(sender, instance, action, **kwargs):
-        if instance.estado_solicitud == True:
-            if action:
-                for servicio in instance.servicios.all():
-                    oferta, new = Oferta.objects.get_or_create(solicitud=instance,
-                                                               servicio=servicio,
-                                                               )
-                    oferta.cantidad=servicio.cantidad
-                    oferta.comentario=servicio.comentario
-                    oferta.save()
+    @receiver(post_save, sender=OrdenServicio)
+    def create_oferta_servicio(sender, instance, created, **kwargs):
+        if created and instance.solicitud.estado_solicitud:
+            oferta, new = Oferta.objects.get_or_create(orden_servicio=instance)
 
-    @receiver(post_save, sender=Solicitud)
-    def save_oferta_servicios(sender, instance, **kwargs):
-        if instance.estado_solicitud == True:
-            for servicio in instance.servicios.all():
-                oferta, new = Oferta.objects.get_or_create(solicitud=instance,
-                                                           servicio=servicio,
-                                                           )
-                oferta.cantidad=servicio.cantidad
-                oferta.comentario=servicio.comentario
-                oferta.save()
+    @receiver(post_save, sender=OrdenServicio)
+    def save_oferta_servicio(sender, instance, **kwargs):
+        if instance.solicitud.estado_solicitud:
+            oferta, new = Oferta.objects.get_or_create(orden_servicio=instance)
