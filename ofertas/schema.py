@@ -598,57 +598,58 @@ class UpdateOferta(graphene.Mutation):
     class Arguments:
         pk = graphene.ID(required=True)
         # supervisor y analista
-        orden_suministro = graphene.ID()
-        orden_servicio = graphene.ID()
+        ordenSuministro = graphene.ID()
+        ordenServicio = graphene.ID()
+        tipoAcceso = graphene.String()
+        naturalezaServicio = graphene.String()
+        descripcionOds = graphene.String()
+        fechaRecibidoOds = graphene.types.datetime.Date()
         tipoOferta = graphene.String()
         tarea = graphene.String()
         descripcionTarea = graphene.String()
         encargadoCliente = graphene.String()
+        tipoElemento = graphene.String()
         fechaEjecucion = graphene.types.datetime.Date()
         confirmacionRecibido = graphene.String()
         comentarioSupervisor = graphene.String()
-        subestadoOferta = graphene.String()
-        estadoOferta = graphene.String()
         # analista
         usuario = graphene.String()
         numeroOferta = graphene.String()
         modalidad = graphene.String()
         precioUnidadProveedor = graphene.Float()
-        precioTotalProveedor = graphene.Float()
         precioUnidadVenta = graphene.Float()
-        precioTotalVenta = graphene.Float()
         precioUnidadCliente = graphene.Float()
-        precioTotalCliente = graphene.Float()
         margen = graphene.Int()
         tipoAdquisicion = graphene.String()
-        fechaRecibidoCliente = graphene.types.datetime.Date()
+        proveedor = graphene.String()
+        tasOfertaAnterior = graphene.String()
         fechaDespachoSupervisor = graphene.types.datetime.Date()
         fechaDespachoCompras = graphene.types.datetime.Date()
         fechaRespuestaCompras = graphene.types.datetime.Date()
-        fechaEnvioCliente = graphene.types.datetime.Date()
+        fechaEnvioOfertaCliente = graphene.types.datetime.Date()
+        fechaEnvioOfertaClienteNegociada = graphene.types.datetime.Date()
         fechaRespuestaCliente = graphene.types.datetime.Date()
+        fechaRespuestaClienteNegociada = graphene.types.datetime.Date()
         tipoRespuestaCliente = graphene.String()
+        tipoRespuestaClienteNegociada = graphene.String()
         po = graphene.String()
         fechaPo = graphene.types.datetime.Date()
         comentarioAnalista = graphene.String()
-
+        subestadoOferta = graphene.String()
+        estadoOferta = graphene.String()
         # almacenista
         fechaEntregaAlmacen = graphene.types.datetime.Date()
         comentarioAlmacenista = graphene.String()
-
         # coordinador lpu/apu
         comentarioCoordinador = graphene.String()
-
         # facturador
         valorConciliadoCliente = graphene.Float()
         fechaConciliadoCliente = graphene.types.datetime.Date()
         comentarioFacturador = graphene.String()
-
         # coordinador podas y estaditicas lpu/apu, y estaditicas lpu/apu
         fechaEnvioActaSmu = graphene.types.datetime.Date()
         comentarioActa = graphene.String()
         fechaFirmaActaSmu = graphene.types.datetime.Date()
-
         # estaditicas lpu/apu
         fechaGrSmu = graphene.types.datetime.Date()
 
@@ -662,47 +663,60 @@ class UpdateOferta(graphene.Mutation):
                 pk,
                 uid,
                 credential,
-                orden_suministro=None,
-                orden_servicio=None,
+                # supervisor y analista
+                ordenSuministro=None,
+                ordenServicio=None,
+                tipoAcceso=None,
+                naturalezaServicio=None,
+                descripcionOds=None,
+                fechaRecibidoOds=None,
                 tipoOferta=None,
                 tarea=None,
                 descripcionTarea=None,
                 encargadoCliente=None,
+                tipoElemento=None,
                 fechaEjecucion=None,
                 confirmacionRecibido=None,
                 comentarioSupervisor=None,
-                subestadoOferta=None,
-                estadoOferta=None,
+                # analista
                 usuario=None,
                 numeroOferta=None,
                 modalidad=None,
                 precioUnidadProveedor=None,
-                precioTotalProveedor=None,
                 precioUnidadVenta=None,
-                precioTotalVenta=None,
                 precioUnidadCliente=None,
-                precioTotalCliente=None,
                 margen=None,
                 tipoAdquisicion=None,
-                fechaRecibidoCliente=None,
+                proveedor=None,
+                tasOfertaAnterior=None,
                 fechaDespachoSupervisor=None,
                 fechaDespachoCompras=None,
                 fechaRespuestaCompras=None,
-                fechaEnvioCliente=None,
+                fechaEnvioOfertaCliente=None,
+                fechaEnvioOfertaClienteNegociada=None,
                 fechaRespuestaCliente=None,
+                fechaRespuestaClienteNegociada=None,
                 tipoRespuestaCliente=None,
+                tipoRespuestaClienteNegociada=None,
                 po=None,
                 fechaPo=None,
                 comentarioAnalista=None,
+                subestadoOferta=None,
+                estadoOferta=None,
+                # almacenista
                 fechaEntregaAlmacen=None,
                 comentarioAlmacenista=None,
+                # coordinador lpu/apu
                 comentarioCoordinador=None,
+                # facturador
                 valorConciliadoCliente=None,
                 fechaConciliadoCliente=None,
                 comentarioFacturador=None,
+                # coordinador podas y estaditicas lpu/apu, y estaditicas lpu/apu
                 fechaEnvioActaSmu=None,
                 comentarioActa=None,
                 fechaFirmaActaSmu=None,
+                # estaditicas lpu/apu
                 fechaGrSmu=None,
                 ):
         try:
@@ -713,57 +727,64 @@ class UpdateOferta(graphene.Mutation):
             raise GraphQLError('are you login?')
         oferta = Oferta.objects.get(pk=pk)
         # supervisor y analista
-        oferta.orden_suministro = OrdenSuministro.objects.get(pk=orden_suministro)
-        oferta.orden_servicio = OrdenServicio.objects.get(pk=orden_servicio)
+        try:
+            oferta.orden_suministro = OrdenSuministro.objects.get(pk=ordenSuministro)
+        except:
+            oferta.orden_suministro = None
+        try:
+            oferta.orden_servicio = OrdenServicio.objects.get(pk=ordenServicio)
+        except:
+            oferta.orden_servicio = None
+        oferta.tipo_acceso = tipoAcceso
+        oferta.naturaleza_servicio = naturalezaServicio
+        oferta.descripcion_ods = descripcionOds
+        oferta.fecha_recibido_ods = fechaRecibidoOds
         oferta.tipo_oferta = tipoOferta
         oferta.tarea = tarea
         oferta.descripcion_tarea = descripcionTarea
         oferta.encargado_cliente = encargadoCliente
+        oferta.tipo_elemento = tipoElemento
         oferta.fecha_ejecucion = fechaEjecucion
         oferta.confirmacion_recibido = confirmacionRecibido
         oferta.comentario_supervisor = comentarioSupervisor
-        oferta.subestado_oferta = subestadoOferta
-        oferta.estado_oferta = estadoOferta
         # analista
         oferta.usuario = usuario
         oferta.numero_oferta = numeroOferta
         oferta.modalidad = modalidad
         oferta.precio_unidad_proveedor = precioUnidadProveedor
-        oferta.precio_total_proveedor = precioTotalProveedor
         oferta.precio_unidad_venta = precioUnidadVenta
-        oferta.precio_total_venta = precioTotalVenta
         oferta.precio_unidad_cliente = precioUnidadCliente
-        oferta.precio_total_cliente = precioTotalCliente
         oferta.margen = margen
         oferta.tipo_adquisicion = tipoAdquisicion
-        oferta.fecha_recibido_cliente = fechaRecibidoCliente
+        oferta.proveedor = proveedor
+        oferta.tas_oferta_anterior = tasOfertaAnterior
         oferta.fecha_despacho_supervisor = fechaDespachoSupervisor
         oferta.fecha_despacho_compras = fechaDespachoCompras
         oferta.fecha_respuesta_compras = fechaRespuestaCompras
-        oferta.fecha_envio_cliente = fechaEnvioCliente
+        oferta.fecha_envio_oferta_cliente = fechaEnvioOfertaCliente
+        oferta.fecha_envio_oferta_cliente_negociada = fechaEnvioOfertaClienteNegociada
         oferta.fecha_respuesta_cliente = fechaRespuestaCliente
+        oferta.fecha_respuesta_cliente_negociada = fechaRespuestaClienteNegociada
         oferta.tipo_respuesta_cliente = tipoRespuestaCliente
+        oferta.tipo_respuesta_cliente_negociada = tipoRespuestaClienteNegociada
         oferta.po = po
         oferta.fecha_po = fechaPo
         oferta.comentario_analista = comentarioAnalista
-
+        oferta.subestado_oferta = subestadoOferta
+        oferta.estado_oferta = estadoOferta
         # almacenista
         oferta.fecha_entrega_almacen = fechaEntregaAlmacen
         oferta.comentario_almacenista = comentarioAlmacenista
-
         # coordinador lpu/apu
         oferta.comentario_coordinador = comentarioCoordinador
-
         # facturador
         oferta.valor_conciliado_cliente = valorConciliadoCliente
         oferta.fecha_conciliado_cliente = fechaConciliadoCliente
         oferta.comentario_facturador = comentarioFacturador
-
         # coordinador podas y estaditicas lpu/apu
         oferta.fecha_envio_acta_smu = fechaEnvioActaSmu
         oferta.comentario_acta = comentarioActa
         oferta.fecha_firma_acta_smu = fechaFirmaActaSmu
-
         # estaditicas lpu/apu
         oferta.fecha_gr_smu = fechaGrSmu
 
@@ -800,7 +821,6 @@ mutation {
     precioTotalCliente: Float
     margen: Int
     tipoAdquisicion: String
-    fechaRecibidoCliente: Date
     fechaDespachoSupervisor: Date
     fechaDespachoCompras: Date
     fechaRespuestaCompras: Date
