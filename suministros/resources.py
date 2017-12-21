@@ -11,8 +11,16 @@ class SuministroResource(resources.ModelResource):
         exclude = ( 'creado', 'actualizado', )
         export_order = (
         'id',
+        'codigo_lpu',
+        'codigo_mm',
         'nombre',
+        'descripcion',
+        'marca',
+        'referencia',
         'subsistema',
+        'unidad',
+        'valor_lpu',
+        'descripcion_lpu',
         'estado',
         'subestado',
         )

@@ -2,6 +2,7 @@ import graphene
 from graphql import GraphQLError
 from graphene_django.types import DjangoObjectType
 from .models import Suministro
+from subsistemas.models import Subsistema
 from tokens.models import Token
 
 class SuministroType(DjangoObjectType):
@@ -72,7 +73,16 @@ query {
 
 class CreateSuministro(graphene.Mutation):
     class Arguments:
-        nombre = graphene.String()
+        codigoLpu = graphene.String(required=True)
+        codigoMm = graphene.String(required=True)
+        nombre = graphene.String(required=True)
+        descripcion = graphene.String()
+        marca = graphene.String()
+        referencia = graphene.String()
+        subsistema = graphene.ID(required=True)
+        unidad = graphene.String()
+        valorLpu = graphene.Float()
+        descripcionLpu = graphene.String()
 
         uid = graphene.String(required=True)
         credential = graphene.String(required=True)
@@ -81,7 +91,16 @@ class CreateSuministro(graphene.Mutation):
     status = graphene.Int()
 
     def mutate(self, info,
+               codigoLpu,
+               codigoMm,
                nombre,
+               descripcion,
+               marca,
+               referencia,
+               subsistema,
+               unidad,
+               valorLpu,
+               descripcionLpu,
                uid,
                credential,
                ):
@@ -92,7 +111,17 @@ class CreateSuministro(graphene.Mutation):
         except Token.DoesNotExist:
             raise GraphQLError('are you login?')
         suministro = Suministro.objects.create(
-               nombre=nombre)
+                codigo_lpu=codigoLpu,
+                codigo_mm=codigoMm,
+                nombre=nombre,
+                descripcion=descripcion,
+                marca=marca,
+                referencia=referencia,
+                subsistema=Subsistema.objects.get(pk=subsistema),
+                unidad=unidad,
+                valor_lpu=valorLpu,
+                descripcion_lpu=descripcionLpu,
+                )
         return CreateSuministro(suministro=suministro, status=200)
 
 '''
@@ -114,7 +143,16 @@ mutation {
 class UpdateSuministro(graphene.Mutation):
     class Arguments:
         pk = graphene.ID(required=True)
-        nombre = graphene.String()
+        codigoLpu = graphene.String(required=True)
+        codigoMm = graphene.String(required=True)
+        nombre = graphene.String(required=True)
+        descripcion = graphene.String()
+        marca = graphene.String()
+        referencia = graphene.String()
+        subsistema = graphene.ID(required=True)
+        unidad = graphene.String()
+        valorLpu = graphene.Float()
+        descripcionLpu = graphene.String()
 
         uid = graphene.String(required=True)
         credential = graphene.String(required=True)
@@ -124,7 +162,16 @@ class UpdateSuministro(graphene.Mutation):
 
     def mutate(self, info,
                 pk,
+                codigoLpu,
+                codigoMm,
                 nombre,
+                descripcion,
+                marca,
+                referencia,
+                subsistema,
+                unidad,
+                valorLpu,
+                descripcionLpu,
                 uid,
                 credential,
                 ):
@@ -135,7 +182,16 @@ class UpdateSuministro(graphene.Mutation):
         except Token.DoesNotExist:
             raise GraphQLError('are you login?')
         suministro = Suministro.objects.get(pk=pk)
+        suministro.codigo_lpu = codigoLpu
+        suministro.codigo_mm = codigoMm
         suministro.nombre = nombre
+        suministro.descripcion = descripcion
+        suministro.marca = marca
+        suministro.referencia = referencia
+        suministro.subsistema = Subsistema.objects.get(pk=subsistema)
+        suministro.unidad = unidad
+        suministro.valor_lpu = valorLpu
+        suministro.descripcion_lpu = descripcionLpu
         suministro.save()
         return UpdateSuministro(suministro=suministro, status=200)
 

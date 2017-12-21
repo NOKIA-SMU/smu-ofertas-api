@@ -2,12 +2,17 @@ from django.db import models
 from subsistemas.models import Subsistema
 
 class Servicio(models.Model):
-    nombre = models.CharField(max_length=255, unique=True)
+    codigo_lpu = models.CharField(max_length=255, unique=True)
+    nombre = models.CharField(max_length=255)
+    descripcion = models.TextField(blank=True, null=True)
+    distancia = models.CharField(max_length=255, blank=True, null=True)
+    peso = models.CharField(max_length=255, blank=True, null=True)
+    tiempo = models.CharField(max_length=255, blank=True, null=True)
     subsistema = models.ForeignKey(Subsistema, on_delete=models.CASCADE,
                                     blank=True, null=True, related_name='servicios')
-    marca = models.CharField(max_length=255, blank=True, null=True)
-    referencia = models.CharField(max_length=255, blank=True, null=True)
     unidad = models.CharField(max_length=255, blank=True, null=True)
+    valor_lpu = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    descripcion_lpu = models.TextField(blank=True, null=True)
 
     estado = models.BooleanField(default=True, editable=False)
     subestado = models.BooleanField(default=False, editable=False)

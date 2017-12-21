@@ -20,6 +20,10 @@ class SolicitudAdmin(ImportExportModelAdmin):
     'orden_servicios',
     'prioridad',
     'estado_solicitud',
+    'estado',
+    'subestado',
+    'creado',
+    'actualizado',
     )
     # list_filter = (
     #

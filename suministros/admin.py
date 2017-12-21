@@ -7,14 +7,26 @@ from .resources import SuministroResource
 @admin.register(Suministro)
 class SuministroAdmin(ImportExportModelAdmin):
     resource_class = SuministroResource
-    # list_display = (
-    # 'id',
-    # 'nombre',
-    #
-    # )
+    list_display = (
+    'id',
+    'codigo_lpu',
+    'codigo_mm',
+    'nombre',
+    'descripcion',
+    'marca',
+    'referencia',
+    'subsistema',
+    'unidad',
+    'valor_lpu',
+    'descripcion_lpu',
+    'estado',
+    'subestado',
+    'creado',
+    'actualizado',
+    )
     # list_filter = (
     #
     # )
-    # search_fields = [
-    #
-    # ]
+    search_fields = [
+    'id',
+    ]

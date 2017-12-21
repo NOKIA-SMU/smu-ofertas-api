@@ -2,6 +2,7 @@ import graphene
 from graphql import GraphQLError
 from graphene_django.types import DjangoObjectType
 from .models import Servicio
+from subsistemas.models import Subsistema
 from tokens.models import Token
 
 class ServicioType(DjangoObjectType):
@@ -72,7 +73,16 @@ query {
 
 class CreateServicio(graphene.Mutation):
     class Arguments:
-        nombre = graphene.String()
+        codigoLpu = graphene.String(required=True)
+        nombre = graphene.String(required=True)
+        descripcion = graphene.String()
+        distancia = graphene.String()
+        peso = graphene.String()
+        tiempo = graphene.String()
+        subsistema = graphene.ID(required=True)
+        unidad = graphene.String()
+        valorLpu = graphene.Float()
+        descripcionLpu = graphene.String()
 
         uid = graphene.String(required=True)
         credential = graphene.String(required=True)
@@ -81,7 +91,16 @@ class CreateServicio(graphene.Mutation):
     status = graphene.Int()
 
     def mutate(self, info,
+               codigoLpu,
                nombre,
+               descripcion,
+               distancia,
+               peso,
+               tiempo,
+               subsistema,
+               unidad,
+               valorLpu,
+               descripcionLpu,
                uid,
                credential,
                ):
@@ -92,7 +111,17 @@ class CreateServicio(graphene.Mutation):
         except Token.DoesNotExist:
             raise GraphQLError('are you login?')
         servicio = Servicio.objects.create(
-               nombre=nombre)
+                codigo_lpu=codigoLpu,
+                nombre=nombre,
+                descripcion=descripcion,
+                distancia=distancia,
+                peso=peso,
+                tiempo=tiempo,
+                subsistema=Subsistema.objects.get(pk=subsistema),
+                unidad=unidad,
+                valor_lpu=valorLpu,
+                descripcion_lpu=descripcionLpu,
+                )
         return CreateServicio(servicio=servicio, status=200)
 
 '''
@@ -114,7 +143,16 @@ mutation {
 class UpdateServicio(graphene.Mutation):
     class Arguments:
         pk = graphene.ID(required=True)
-        nombre = graphene.String()
+        codigoLpu = graphene.String(required=True)
+        nombre = graphene.String(required=True)
+        descripcion = graphene.String()
+        distancia = graphene.String()
+        peso = graphene.String()
+        tiempo = graphene.String()
+        subsistema = graphene.ID(required=True)
+        unidad = graphene.String()
+        valorLpu = graphene.Float()
+        descripcionLpu = graphene.String()
 
         uid = graphene.String(required=True)
         credential = graphene.String(required=True)
@@ -124,7 +162,16 @@ class UpdateServicio(graphene.Mutation):
 
     def mutate(self, info,
                 pk,
+                codigoLpu,
                 nombre,
+                descripcion,
+                distancia,
+                peso,
+                tiempo,
+                subsistema,
+                unidad,
+                valorLpu,
+                descripcionLpu,
                 uid,
                 credential,
                 ):
@@ -135,7 +182,16 @@ class UpdateServicio(graphene.Mutation):
         except Token.DoesNotExist:
             raise GraphQLError('are you login?')
         servicio = Servicio.objects.get(pk=pk)
+        servicio.codigo_lpu = codigoLpu
         servicio.nombre = nombre
+        servicio.descripcion = descripcion
+        servicio.distancia = distancia
+        servicio.peso = peso
+        servicio.tiempo = tiempo
+        servicio.subsistema = Subsistema.objects.get(pk=subsistema)
+        servicio.unidad = unidad
+        servicio.valor_lpu = valorLpu
+        servicio.descripcion_lpu = descripcionLpu
         servicio.save()
         return UpdateServicio(servicio=servicio, status=200)
 

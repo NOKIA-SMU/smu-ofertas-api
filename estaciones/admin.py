@@ -19,6 +19,10 @@ class EstacionAdmin(ImportExportModelAdmin):
     'longitud',
     'estructura',
     'categoria',
+    'estado',
+    'subestado',
+    'creado',
+    'actualizado',
     )
     list_filter = (
     'region',

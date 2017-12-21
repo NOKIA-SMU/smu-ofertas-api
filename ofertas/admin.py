@@ -80,6 +80,10 @@ class OfertaAdmin(ImportExportModelAdmin):
 
     # estaditicas lpu/apu
     'fecha_gr_smu',
+    'estado',
+    'subestado',
+    'creado',
+    'actualizado',
     )
     # list_filter = (
     #

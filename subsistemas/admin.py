@@ -10,6 +10,10 @@ class SubsistemaAdmin(ImportExportModelAdmin):
     list_display = (
     'id',
     'nombre',
+    'estado',
+    'subestado',
+    'creado',
+    'actualizado',
     )
     # list_filter = (
     #

@@ -11,8 +11,16 @@ class ServicioResource(resources.ModelResource):
         exclude = ( 'creado', 'actualizado', )
         export_order = (
         'id',
+        'codigo_lpu',
         'nombre',
+        'descripcion',
+        'distancia',
+        'peso',
+        'tiempo',
         'subsistema',
+        'unidad',
+        'valor_lpu',
+        'descripcion_lpu',
         'estado',
         'subestado',
         )
