@@ -1,10 +1,9 @@
 from django.db import models
 from suministros.models import Suministro
 from servicios.models import Servicio
-from django.db.models.signals import post_save, m2m_changed
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from . import choices
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 from ordenes.models import OrdenSuministro, OrdenServicio
 
@@ -28,12 +27,10 @@ class Oferta(models.Model):
     encargado_cliente = models.CharField(max_length=255, blank=True, null=True)
     tipo_elemento = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.TIPO_ELEMENTO_CHOICES)
-
     fecha_ejecucion = models.DateField(blank=True, null=True)
     confirmacion_recibido = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.CONFIRMACION_RECIBIDO_CHOICES)
     comentario_supervisor = models.TextField(blank=True, null=True)
-
     # analista
     usuario = models.CharField(max_length=255, blank=True, null=True)
     numero_oferta = models.CharField(max_length=255, blank=True, null=True)
@@ -72,12 +69,10 @@ class Oferta(models.Model):
 
     fecha_respuesta_cliente_negociada = models.DateField(blank=True, null=True)
     semana_respuesta_cliente_negociada = models.PositiveIntegerField(blank=True, null=True, editable=False)
-
     tipo_respuesta_cliente = models.CharField(max_length=255, blank=True, null=True,
                                             choices=choices.TIPO_RESPUESTA_CLIENTE_CHOICES)
     tipo_respuesta_cliente_negociada = models.CharField(max_length=255, blank=True, null=True,
                                             choices=choices.TIPO_RESPUESTA_CLIENTE_CHOICES)
-
     po = models.CharField(max_length=255, blank=True, null=True)
     fecha_po = models.DateField(blank=True, null=True)
     comentario_analista = models.TextField(blank=True, null=True)
@@ -85,24 +80,19 @@ class Oferta(models.Model):
                                 choices=choices.SUBESTADO_OFERTA_CHOICES)
     estado_oferta = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.ESTADO_OFERTA_CHOICES)
-
     # almacenista
     fecha_entrega_almacen = models.DateField(blank=True, null=True)
     comentario_almacenista = models.TextField(blank=True, null=True)
-
     # coordinador lpu/apu
     comentario_coordinador = models.TextField(blank=True, null=True)
-
     # facturador
     valor_conciliado_cliente = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     fecha_conciliado_cliente = models.DateField(blank=True, null=True)
     comentario_facturador = models.TextField(blank=True, null=True)
-
     # coordinador podas y estaditicas lpu/apu
     fecha_envio_acta_smu = models.DateField(blank=True, null=True)
     comentario_acta = models.TextField(blank=True, null=True)
     fecha_firma_acta_smu = models.DateField(blank=True, null=True)
-
     # estaditicas lpu/apu
     fecha_gr_smu = models.DateField(blank=True, null=True)
 
@@ -161,6 +151,7 @@ class Oferta(models.Model):
     def save_oferta_suministro(sender, instance, **kwargs):
         if instance.solicitud.estado_solicitud:
             oferta, new = Oferta.objects.get_or_create(orden_suministro=instance)
+            instance.oferta.save()
 
     @receiver(post_save, sender=OrdenServicio)
     def create_oferta_servicio(sender, instance, created, **kwargs):
@@ -171,3 +162,4 @@ class Oferta(models.Model):
     def save_oferta_servicio(sender, instance, **kwargs):
         if instance.solicitud.estado_solicitud:
             oferta, new = Oferta.objects.get_or_create(orden_servicio=instance)
+            instance.oferta.save()

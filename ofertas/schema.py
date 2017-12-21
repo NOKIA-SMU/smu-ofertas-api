@@ -373,7 +373,7 @@ query {
 #         precioTotalVenta = graphene.Float()
 #         precioUnidadCliente = graphene.Float()
 #         precioTotalCliente = graphene.Float()
-#         margen = graphene.Int()
+#         margen = graphene.Float()
 #         tipoAdquisicion = graphene.String()
 #         fechaRecibidoCliente = graphene.types.datetime.Date()
 #         fechaDespachoSupervisor = graphene.types.datetime.Date()
@@ -619,7 +619,6 @@ class UpdateOferta(graphene.Mutation):
         precioUnidadProveedor = graphene.Float()
         precioUnidadVenta = graphene.Float()
         precioUnidadCliente = graphene.Float()
-        margen = graphene.Int()
         tipoAdquisicion = graphene.String()
         proveedor = graphene.String()
         tasOfertaAnterior = graphene.String()
@@ -685,7 +684,6 @@ class UpdateOferta(graphene.Mutation):
                 precioUnidadProveedor=None,
                 precioUnidadVenta=None,
                 precioUnidadCliente=None,
-                margen=None,
                 tipoAdquisicion=None,
                 proveedor=None,
                 tasOfertaAnterior=None,
@@ -754,7 +752,6 @@ class UpdateOferta(graphene.Mutation):
         oferta.precio_unidad_proveedor = precioUnidadProveedor
         oferta.precio_unidad_venta = precioUnidadVenta
         oferta.precio_unidad_cliente = precioUnidadCliente
-        oferta.margen = margen
         oferta.tipo_adquisicion = tipoAdquisicion
         oferta.proveedor = proveedor
         oferta.tas_oferta_anterior = tasOfertaAnterior
@@ -819,7 +816,6 @@ mutation {
     precioTotalVenta: Float
     precioUnidadCliente: Float
     precioTotalCliente: Float
-    margen: Int
     tipoAdquisicion: String
     fechaDespachoSupervisor: Date
     fechaDespachoCompras: Date
@@ -875,7 +871,6 @@ mutation {
       precioTotalVenta
       precioUnidadCliente
       precioTotalCliente
-      margen
       tipoAdquisicion
       fechaRecibidoCliente
       fechaDespachoSupervisor
