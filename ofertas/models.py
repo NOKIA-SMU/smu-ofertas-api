@@ -45,8 +45,7 @@ class Oferta(models.Model):
     precio_total_venta = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, editable=False)
     precio_unidad_cliente = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     precio_total_cliente = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, editable=False)
-    margen = models.IntegerField(blank=True, null=True,
-                                validators=[MinValueValidator(0), MaxValueValidator(100)], editable=False)
+    margen = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, editable=False)
     tipo_adquisicion = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.TIPO_ADQUISICION_CHOICES)
     proveedor = models.CharField(max_length=255, blank=True, null=True,
@@ -137,7 +136,6 @@ class Oferta(models.Model):
             self.semana_respuesta_cliente = self.fecha_respuesta_cliente.isocalendar()[1]
         if self.fecha_respuesta_cliente_negociada:
             self.semana_respuesta_cliente_negociada = self.fecha_espuesta_cliente_negociada.isocalendar()[1]
-
         if self.orden_suministro and self.precio_unidad_proveedor:
             self.precio_total_proveedor = self.precio_unidad_proveedor * self.orden_suministro.cantidad
         if self.orden_servicio and self.precio_unidad_proveedor:
@@ -150,6 +148,8 @@ class Oferta(models.Model):
             self.precio_total_cliente = self.precio_unidad_cliente * self.orden_suministro.cantidad
         if self.orden_servicio and self.precio_unidad_cliente:
             self.precio_total_cliente = self.precio_unidad_cliente * self.orden_servicio.cantidad
+        if self.precio_total_proveedor and self.precio_total_cliente:
+            self.margen = self.precio_total_cliente / self.precio_total_proveedor * 100
         super(Oferta, self).save(*args, **kwargs)
 
     @receiver(post_save, sender=OrdenSuministro)
