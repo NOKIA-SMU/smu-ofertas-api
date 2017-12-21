@@ -6,6 +6,10 @@ from .models import OrdenSuministro, OrdenServicio
 class OrdenSuministroAdmin(admin.ModelAdmin):
     list_display = (
     'id',
+    'solicitud',
+    'suministro',
+    'cantidad',
+    'comentario',
     'estado',
     'subestado',
     'creado',
@@ -22,6 +26,10 @@ class OrdenSuministroAdmin(admin.ModelAdmin):
 class OrdenServicioAdmin(admin.ModelAdmin):
     list_display = (
     'id',
+    'solicitud',
+    'servicio',
+    'cantidad',
+    'comentario',
     'estado',
     'subestado',
     'creado',

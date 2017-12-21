@@ -19,10 +19,6 @@ class EstacionAdmin(ImportExportModelAdmin):
     'longitud',
     'estructura',
     'categoria',
-    'estado',
-    'subestado',
-    'creado',
-    'actualizado',
     )
     list_filter = (
     'region',
@@ -30,10 +26,6 @@ class EstacionAdmin(ImportExportModelAdmin):
     'ciudad',
     'estructura',
     'categoria',
-    'estado',
-    'subestado',
-    'creado',
-    'actualizado',
     )
     search_fields = [
     'id',
@@ -47,8 +39,4 @@ class EstacionAdmin(ImportExportModelAdmin):
     'longitud',
     'estructura',
     'categoria',
-    'estado',
-    'subestado',
-    'creado',
-    'actualizado',
     ]

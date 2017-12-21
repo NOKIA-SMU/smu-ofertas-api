@@ -11,11 +11,9 @@ class SubsistemaAdmin(ImportExportModelAdmin):
     'id',
     'nombre',
     )
-    list_filter = (
-    'id',
-    'nombre',
-    )
+    # list_filter = (
+    #
+    # )
     search_fields = [
     'id',
-    'nombre',
     ]

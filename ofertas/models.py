@@ -4,7 +4,6 @@ from servicios.models import Servicio
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from . import choices
-
 from ordenes.models import OrdenSuministro, OrdenServicio
 
 class Oferta(models.Model):
@@ -48,25 +47,18 @@ class Oferta(models.Model):
     proveedor = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.PROVEEDOR_CHOICES)
     tas_oferta_anterior = models.CharField(max_length=255, blank=True, null=True)
-
     fecha_despacho_supervisor = models.DateField(blank=True, null=True)
     semana_despacho_supervisor = models.PositiveIntegerField(blank=True, null=True, editable=False)
-
     fecha_despacho_compras = models.DateField(blank=True, null=True)
     semana_despacho_compras = models.PositiveIntegerField(blank=True, null=True, editable=False)
-
     fecha_respuesta_compras = models.DateField(blank=True, null=True)
     semana_respuesta_compras = models.PositiveIntegerField(blank=True, null=True, editable=False)
-
     fecha_envio_oferta_cliente = models.DateField(blank=True, null=True)
     semana_envio_oferta_cliente = models.PositiveIntegerField(blank=True, null=True, editable=False)
-
     fecha_envio_oferta_cliente_negociada = models.DateField(blank=True, null=True)
     semana_envio_oferta_cliente_negociada = models.PositiveIntegerField(blank=True, null=True, editable=False)
-
     fecha_respuesta_cliente = models.DateField(blank=True, null=True)
     semana_respuesta_cliente = models.PositiveIntegerField(blank=True, null=True, editable=False)
-
     fecha_respuesta_cliente_negociada = models.DateField(blank=True, null=True)
     semana_respuesta_cliente_negociada = models.PositiveIntegerField(blank=True, null=True, editable=False)
     tipo_respuesta_cliente = models.CharField(max_length=255, blank=True, null=True,
@@ -110,36 +102,36 @@ class Oferta(models.Model):
         return str(self.id)
 
     def save(self, *args, **kwargs):
-        if self.fecha_recibido_ods:
+        if self.fecha_recibido_ods is not None:
             self.semana_recibido_ods = self.fecha_recibido_ods.isocalendar()[1]
-        if self.fecha_despacho_supervisor:
+        if self.fecha_despacho_supervisor is not None:
             self.semana_despacho_supervisor = self.fecha_despacho_supervisor.isocalendar()[1]
-        if self.fecha_despacho_compras:
+        if self.fecha_despacho_compras is not None:
             self.semana_despacho_compras = self.fecha_despacho_compras.isocalendar()[1]
-        if self.fecha_respuesta_compras:
+        if self.fecha_respuesta_compras is not None:
             self.semana_respuesta_compras = self.fecha_respuesta_compras.isocalendar()[1]
-        if self.fecha_envio_oferta_cliente:
+        if self.fecha_envio_oferta_cliente is not None:
             self.semana_envio_oferta_cliente = self.fecha_envio_oferta_cliente.isocalendar()[1]
-        if self.fecha_envio_oferta_cliente_negociada:
+        if self.fecha_envio_oferta_cliente_negociada is not None:
             self.semana_envio_oferta_cliente_negociada = self.fecha_envio_oferta_cliente_negociada.isocalendar()[1]
-        if self.fecha_respuesta_cliente:
+        if self.fecha_respuesta_cliente is not None:
             self.semana_respuesta_cliente = self.fecha_respuesta_cliente.isocalendar()[1]
-        if self.fecha_respuesta_cliente_negociada:
+        if self.fecha_respuesta_cliente_negociada is not None:
             self.semana_respuesta_cliente_negociada = self.fecha_espuesta_cliente_negociada.isocalendar()[1]
-        if self.orden_suministro and self.precio_unidad_proveedor:
+        if self.orden_suministro and self.precio_unidad_proveedor is not None:
             self.precio_total_proveedor = self.precio_unidad_proveedor * self.orden_suministro.cantidad
-        if self.orden_servicio and self.precio_unidad_proveedor:
+        if self.orden_servicio and self.precio_unidad_proveedor is not None:
             self.precio_total_proveedor = self.precio_unidad_proveedor * self.orden_servicio.cantidad
-        if self.orden_suministro and self.precio_unidad_venta:
+        if self.orden_suministro and self.precio_unidad_venta is not None:
             self.precio_total_venta = self.precio_unidad_venta * self.orden_suministro.cantidad
-        if self.orden_servicio and self.precio_unidad_venta:
+        if self.orden_servicio and self.precio_unidad_venta is not None:
             self.precio_total_venta = self.precio_unidad_venta * self.orden_servicio.cantidad
-        if self.orden_suministro and self.precio_unidad_cliente:
+        if self.orden_suministro and self.precio_unidad_cliente is not None:
             self.precio_total_cliente = self.precio_unidad_cliente * self.orden_suministro.cantidad
-        if self.orden_servicio and self.precio_unidad_cliente:
+        if self.orden_servicio and self.precio_unidad_cliente is not None:
             self.precio_total_cliente = self.precio_unidad_cliente * self.orden_servicio.cantidad
-        if self.precio_total_proveedor and self.precio_total_cliente:
-            self.margen = self.precio_total_cliente / self.precio_total_proveedor * 100
+        if self.precio_total_proveedor is not None and self.precio_total_cliente is not None:
+            self.margen = (self.precio_total_cliente - self.precio_total_proveedor) / self.precio_total_proveedor * 100
         super(Oferta, self).save(*args, **kwargs)
 
     @receiver(post_save, sender=OrdenSuministro)
