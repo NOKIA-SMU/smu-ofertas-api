@@ -27,7 +27,7 @@ class SolicitudQuery(graphene.ObjectType):
                                 credential=graphene.String())
 
     def resolve_solicitudes(self, info, **kwargs):
-        # print (info.context.META) looking for headers and more
+        # (info.context.META) looking for headers and more
         uid = kwargs.get('uid')
         credential = kwargs.get('credential')
         try:
@@ -328,27 +328,54 @@ class UpdateSolicitud(graphene.Mutation):
         solicitud.tas = tas
         solicitud.estacion = Estacion.objects.get(pk=estacion)
         solicitud.subsistema = Subsistema.objects.get(pk=subsistema)
+        # logic orden_suministros
+        sumi = solicitud.orden_suministros.all()
+        list_old_sumi = []
+        for id_sumi in sumi:
+            list_old_sumi.append(id_sumi.pk)
+        list_new_sumi = []
         for i in suministros:
+            try:
+                new_sumi = sumi.get(suministro=i['pk'])
+                list_new_sumi.append(new_sumi.pk)
+            except:
+                pass
             suministro = Suministro.objects.get(pk=i['pk'])
             cantidad = i['qty']
             comentario = i['comentario']
-            orden_suministro, new = OrdenSuministro.objects.get_or_create(solicitud=solicitud,
-                                                     suministro=suministro,
-                                                     )
+            orden_suministro, new = OrdenSuministro.objects.get_or_create(
+                                    solicitud=solicitud, suministro=suministro)
             orden_suministro.cantidad = cantidad
             orden_suministro.comentario = comentario
             orden_suministro.save()
+        excludes_sumi = sumi.exclude(pk__in=list_new_sumi)
+        for exclude_sumi in excludes_sumi:
+            if exclude_sumi.pk in list_old_sumi:
+                exclude_sumi.delete()
+        # logic oorden_servicios
+        servi = solicitud.orden_servicios.all()
+        list_old_servi = []
+        for id_servi in servi:
+            list_old_servi.append(id_servi.pk)
+        list_new_servi = []
         for i in servicios:
+            try:
+                new_servi = servi.get(servicio=i['pk'])
+                list_new_servi.append(new_servi.pk)
+            except:
+                pass
             servicio = Servicio.objects.get(pk=i['pk'])
             cantidad = i['qty']
             comentario = i['comentario']
-            print (servicio)
-            orden_servicio, new = OrdenServicio.objects.get_or_create(solicitud=solicitud,
-                                                     servicio=servicio,
-                                                     )
+            orden_servicio, new = OrdenServicio.objects.get_or_create(
+                                        solicitud=solicitud, servicio=servicio)
             orden_servicio.cantidad = cantidad
             orden_servicio.comentario = comentario
             orden_servicio.save()
+        excludes_servi = servi.exclude(pk__in=list_new_servi)
+        for exclude_servi in excludes_servi:
+            if exclude_servi.pk in list_old_servi:
+                exclude_servi.delete()
         solicitud.prioridad = prioridad
         solicitud.estado_solicitud = estadoSolicitud
         solicitud.save()
