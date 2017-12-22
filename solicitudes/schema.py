@@ -208,6 +208,8 @@ class CreateSolicitud(graphene.Mutation):
                )
         for i in suministros:
             suministro = Suministro.objects.get(pk=i['pk'])
+            if suministro.subsistema != solicitud.subsistema:
+                raise GraphQLError('the supply does not belong to the subsystem')
             cantidad = i['qty']
             comentario = i['comentario']
             orden_suministro = OrdenSuministro.objects.create(
@@ -218,6 +220,8 @@ class CreateSolicitud(graphene.Mutation):
                    )
         for i in servicios:
             servicio = Servicio.objects.get(pk=i['pk'])
+            if servicio.subsistema != solicitud.subsistema:
+                raise GraphQLError('the service does not belong to the subsystem')
             cantidad = i['qty']
             comentario = i['comentario']
             orden_servicio = OrdenServicio.objects.create(
@@ -341,6 +345,8 @@ class UpdateSolicitud(graphene.Mutation):
             except:
                 pass
             suministro = Suministro.objects.get(pk=i['pk'])
+            if suministro.subsistema != solicitud.subsistema:
+                raise GraphQLError('the supply does not belong to the subsystem')
             cantidad = i['qty']
             comentario = i['comentario']
             orden_suministro, new = OrdenSuministro.objects.get_or_create(
@@ -365,6 +371,8 @@ class UpdateSolicitud(graphene.Mutation):
             except:
                 pass
             servicio = Servicio.objects.get(pk=i['pk'])
+            if servicio.subsistema != solicitud.subsistema:
+                raise GraphQLError('the service does not belong to the subsystem')
             cantidad = i['qty']
             comentario = i['comentario']
             orden_servicio, new = OrdenServicio.objects.get_or_create(
