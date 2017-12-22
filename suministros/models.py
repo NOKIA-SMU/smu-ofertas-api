@@ -2,8 +2,8 @@ from django.db import models
 from subsistemas.models import Subsistema
 
 class Suministro(models.Model):
-    codigo_lpu = models.CharField(max_length=255, unique=True)
-    codigo_mm = models.CharField(max_length=255)
+    codigo_lpu = models.CharField(max_length=255)
+    codigo_mm = models.CharField(max_length=255, unique=True)
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField(blank=True, null=True)
     marca = models.CharField(max_length=255, blank=True, null=True)
