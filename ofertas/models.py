@@ -12,6 +12,8 @@ class Oferta(models.Model):
                                         blank=True, null=True)
     orden_servicio = models.OneToOneField(OrdenServicio, on_delete=models.CASCADE,
                                         blank=True, null=True)
+    tipo_sitio = models.CharField(max_length=255, blank=True, null=True,
+                                choices=choices.TIPO_SITIO_CHOICES)
     tipo_acceso = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.TIPO_ACCESO_CHOICES)
     naturaleza_servicio = models.CharField(max_length=255, blank=True, null=True,
@@ -21,7 +23,7 @@ class Oferta(models.Model):
     semana_recibido_ods = models.PositiveIntegerField(blank=True, null=True, editable=False)
     tipo_oferta = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.TIPO_OFERTA_CHOICES)
-    tarea = models.CharField(max_length=255, blank=True, null=True)
+    work_order = models.CharField(max_length=255, blank=True, null=True)
     descripcion_tarea = models.TextField(blank=True, null=True)
     encargado_cliente = models.CharField(max_length=255, blank=True, null=True)
     tipo_elemento = models.CharField(max_length=255, blank=True, null=True,
@@ -31,7 +33,6 @@ class Oferta(models.Model):
                                 choices=choices.CONFIRMACION_RECIBIDO_CHOICES)
     comentario_supervisor = models.TextField(blank=True, null=True)
     # analista
-    usuario = models.CharField(max_length=255, blank=True, null=True)
     numero_oferta = models.CharField(max_length=255, blank=True, null=True)
     modalidad = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.MODALIDAD_CHOICES)
@@ -47,7 +48,7 @@ class Oferta(models.Model):
     proveedor = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.PROVEEDOR_CHOICES)
     tas_oferta_anterior = models.CharField(max_length=255, blank=True, null=True)
-    fecha_despacho_supervisor = models.DateField(blank=True, null=True)
+    fecha_despacho_supervisor = models.DateField(auto_now_add=True, blank=True, null=True)
     semana_despacho_supervisor = models.PositiveIntegerField(blank=True, null=True, editable=False)
     fecha_despacho_compras = models.DateField(blank=True, null=True)
     semana_despacho_compras = models.PositiveIntegerField(blank=True, null=True, editable=False)

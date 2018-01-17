@@ -20,6 +20,9 @@ class OfertaQuery(graphene.ObjectType):
                               pk=graphene.ID(),
                               uid=graphene.String(),
                               credential=graphene.String())
+    tipoSitio = graphene.List(graphene.String,
+                                uid=graphene.String(),
+                                credential=graphene.String())
     tipoAcceso = graphene.List(graphene.String,
                                 uid=graphene.String(),
                                 credential=graphene.String())
@@ -78,6 +81,17 @@ class OfertaQuery(graphene.ObjectType):
         if pk is not None:
             return Oferta.objects.get(pk=pk)
         return None
+
+    def resolve_tipoSitio(self, info, **kwargs):
+        uid = kwargs.get('uid')
+        credential = kwargs.get('credential')
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
+        return dict(choices.TIPO_SITIO_CHOICES)
 
     def resolve_tipoAcceso(self, info, **kwargs):
         uid = kwargs.get('uid')
@@ -230,7 +244,6 @@ query {
     comentarioSupervisor
     subestadoOferta
     estadoOferta
-    usuario
     numeroOferta
     modalidad
     precioUnidadProveedor
@@ -600,12 +613,13 @@ class UpdateOferta(graphene.Mutation):
         # supervisor y analista
         ordenSuministro = graphene.ID()
         ordenServicio = graphene.ID()
+        tipoSitio = graphene.String()
         tipoAcceso = graphene.String()
         naturalezaServicio = graphene.String()
         descripcionOds = graphene.String()
         fechaRecibidoOds = graphene.types.datetime.Date()
         tipoOferta = graphene.String()
-        tarea = graphene.String()
+        workOrder = graphene.String()
         descripcionTarea = graphene.String()
         encargadoCliente = graphene.String()
         tipoElemento = graphene.String()
@@ -613,7 +627,6 @@ class UpdateOferta(graphene.Mutation):
         confirmacionRecibido = graphene.String()
         comentarioSupervisor = graphene.String()
         # analista
-        usuario = graphene.String()
         numeroOferta = graphene.String()
         modalidad = graphene.String()
         precioUnidadProveedor = graphene.Float()
@@ -622,7 +635,6 @@ class UpdateOferta(graphene.Mutation):
         tipoAdquisicion = graphene.String()
         proveedor = graphene.String()
         tasOfertaAnterior = graphene.String()
-        fechaDespachoSupervisor = graphene.types.datetime.Date()
         fechaDespachoCompras = graphene.types.datetime.Date()
         fechaRespuestaCompras = graphene.types.datetime.Date()
         fechaEnvioOfertaCliente = graphene.types.datetime.Date()
@@ -665,12 +677,13 @@ class UpdateOferta(graphene.Mutation):
                 # supervisor y analista
                 ordenSuministro=None,
                 ordenServicio=None,
+                tipoSitio=None,
                 tipoAcceso=None,
                 naturalezaServicio=None,
                 descripcionOds=None,
                 fechaRecibidoOds=None,
                 tipoOferta=None,
-                tarea=None,
+                workOrder=None,
                 descripcionTarea=None,
                 encargadoCliente=None,
                 tipoElemento=None,
@@ -678,7 +691,6 @@ class UpdateOferta(graphene.Mutation):
                 confirmacionRecibido=None,
                 comentarioSupervisor=None,
                 # analista
-                usuario=None,
                 numeroOferta=None,
                 modalidad=None,
                 precioUnidadProveedor=None,
@@ -687,7 +699,6 @@ class UpdateOferta(graphene.Mutation):
                 tipoAdquisicion=None,
                 proveedor=None,
                 tasOfertaAnterior=None,
-                fechaDespachoSupervisor=None,
                 fechaDespachoCompras=None,
                 fechaRespuestaCompras=None,
                 fechaEnvioOfertaCliente=None,
@@ -733,12 +744,13 @@ class UpdateOferta(graphene.Mutation):
             oferta.orden_servicio = OrdenServicio.objects.get(pk=ordenServicio)
         except:
             oferta.orden_servicio = None
+        oferta.tipo_sitio = tipoSitio
         oferta.tipo_acceso = tipoAcceso
         oferta.naturaleza_servicio = naturalezaServicio
         oferta.descripcion_ods = descripcionOds
         oferta.fecha_recibido_ods = fechaRecibidoOds
         oferta.tipo_oferta = tipoOferta
-        oferta.tarea = tarea
+        oferta.work_order = workOrder
         oferta.descripcion_tarea = descripcionTarea
         oferta.encargado_cliente = encargadoCliente
         oferta.tipo_elemento = tipoElemento
@@ -746,7 +758,6 @@ class UpdateOferta(graphene.Mutation):
         oferta.confirmacion_recibido = confirmacionRecibido
         oferta.comentario_supervisor = comentarioSupervisor
         # analista
-        oferta.usuario = usuario
         oferta.numero_oferta = numeroOferta
         oferta.modalidad = modalidad
         oferta.precio_unidad_proveedor = precioUnidadProveedor
@@ -755,7 +766,6 @@ class UpdateOferta(graphene.Mutation):
         oferta.tipo_adquisicion = tipoAdquisicion
         oferta.proveedor = proveedor
         oferta.tas_oferta_anterior = tasOfertaAnterior
-        oferta.fecha_despacho_supervisor = fechaDespachoSupervisor
         oferta.fecha_despacho_compras = fechaDespachoCompras
         oferta.fecha_respuesta_compras = fechaRespuestaCompras
         oferta.fecha_envio_oferta_cliente = fechaEnvioOfertaCliente

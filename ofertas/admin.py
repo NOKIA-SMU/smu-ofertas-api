@@ -12,13 +12,14 @@ class OfertaAdmin(ImportExportModelAdmin):
     # supervisor
     'orden_suministro',
     'orden_servicio',
+    'tipo_sitio',
     'tipo_acceso',
     'naturaleza_servicio',
     'descripcion_ods',
     'fecha_recibido_ods',
     'semana_recibido_ods',
     'tipo_oferta',
-    'tarea',
+    'work_order',
     'descripcion_tarea',
     'encargado_cliente',
     'tipo_elemento',
@@ -26,7 +27,6 @@ class OfertaAdmin(ImportExportModelAdmin):
     'confirmacion_recibido',
     'comentario_supervisor',
     # analista
-    'usuario',
     'numero_oferta',
     'modalidad',
     'precio_unidad_proveedor',
