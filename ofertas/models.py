@@ -117,7 +117,7 @@ class Oferta(models.Model):
         if self.fecha_respuesta_cliente is not None:
             self.semana_respuesta_cliente = self.fecha_respuesta_cliente.isocalendar()[1]
         if self.fecha_respuesta_cliente_negociada is not None:
-            self.semana_respuesta_cliente_negociada = self.fecha_espuesta_cliente_negociada.isocalendar()[1]
+            self.semana_respuesta_cliente_negociada = self.fecha_respuesta_cliente_negociada.isocalendar()[1]
         if self.orden_suministro and self.precio_unidad_proveedor is not None:
             self.precio_total_proveedor = self.precio_unidad_proveedor * self.orden_suministro.cantidad
         if self.orden_servicio and self.precio_unidad_proveedor is not None:
