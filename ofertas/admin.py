@@ -22,7 +22,6 @@ class OfertaAdmin(ImportExportModelAdmin):
     'work_order',
     'descripcion_tarea',
     'encargado_cliente',
-    'tipo_elemento',
     'fecha_ejecucion',
     'confirmacion_recibido',
     'comentario_supervisor',
@@ -57,6 +56,7 @@ class OfertaAdmin(ImportExportModelAdmin):
     'tipo_respuesta_cliente_negociada',
     'po',
     'fecha_po',
+    'valor_po',
     'comentario_analista',
     'subestado_oferta',
     'estado_oferta',
@@ -69,6 +69,7 @@ class OfertaAdmin(ImportExportModelAdmin):
     'comentario_coordinador',
 
     # facturador
+    'tipo_elemento',
     'valor_conciliado_cliente',
     'fecha_conciliado_cliente',
     'comentario_facturador',

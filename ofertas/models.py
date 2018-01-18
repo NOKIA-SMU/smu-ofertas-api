@@ -26,8 +26,6 @@ class Oferta(models.Model):
     work_order = models.CharField(max_length=255, blank=True, null=True)
     descripcion_tarea = models.TextField(blank=True, null=True)
     encargado_cliente = models.CharField(max_length=255, blank=True, null=True)
-    tipo_elemento = models.CharField(max_length=255, blank=True, null=True,
-                                choices=choices.TIPO_ELEMENTO_CHOICES)
     fecha_ejecucion = models.DateField(blank=True, null=True)
     confirmacion_recibido = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.CONFIRMACION_RECIBIDO_CHOICES)
@@ -68,6 +66,7 @@ class Oferta(models.Model):
                                             choices=choices.TIPO_RESPUESTA_CLIENTE_CHOICES)
     po = models.CharField(max_length=255, blank=True, null=True)
     fecha_po = models.DateField(blank=True, null=True)
+    valor_po = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     comentario_analista = models.TextField(blank=True, null=True)
     subestado_oferta = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.SUBESTADO_OFERTA_CHOICES)
@@ -79,6 +78,8 @@ class Oferta(models.Model):
     # coordinador lpu/apu
     comentario_coordinador = models.TextField(blank=True, null=True)
     # facturador
+    tipo_elemento = models.CharField(max_length=255, blank=True, null=True,
+                                choices=choices.TIPO_ELEMENTO_CHOICES)
     valor_conciliado_cliente = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     fecha_conciliado_cliente = models.DateField(blank=True, null=True)
     comentario_facturador = models.TextField(blank=True, null=True)

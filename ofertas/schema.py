@@ -32,9 +32,6 @@ class OfertaQuery(graphene.ObjectType):
     tipoOferta = graphene.List(graphene.String,
                                 uid=graphene.String(),
                                 credential=graphene.String())
-    tipoElemento = graphene.List(graphene.String,
-                                uid=graphene.String(),
-                                credential=graphene.String())
     modalidad = graphene.List(graphene.String,
                                 uid=graphene.String(),
                                 credential=graphene.String())
@@ -54,6 +51,9 @@ class OfertaQuery(graphene.ObjectType):
                                 uid=graphene.String(),
                                 credential=graphene.String())
     estadoOferta = graphene.List(graphene.String,
+                                uid=graphene.String(),
+                                credential=graphene.String())
+    tipoElemento = graphene.List(graphene.String,
                                 uid=graphene.String(),
                                 credential=graphene.String())
 
@@ -125,17 +125,6 @@ class OfertaQuery(graphene.ObjectType):
         except Token.DoesNotExist:
             raise GraphQLError('are you login?')
         return dict(choices.TIPO_OFERTA_CHOICES)
-
-    def resolve_tipoElemento(self, info, **kwargs):
-        uid = kwargs.get('uid')
-        credential = kwargs.get('credential')
-        try:
-            token = Token.objects.get(uid=uid)
-            if token.credential != credential:
-                raise GraphQLError('credential invalid')
-        except Token.DoesNotExist:
-            raise GraphQLError('are you login?')
-        return dict(choices.TIPO_ELEMENTO_CHOICES)
 
     def resolve_modalidad(self, info, **kwargs):
         uid = kwargs.get('uid')
@@ -214,150 +203,16 @@ class OfertaQuery(graphene.ObjectType):
             raise GraphQLError('are you login?')
         return dict(choices.ESTADO_OFERTA_CHOICES)
 
-'''
-query {
-  ofertas (
-    uid: String!
-    credential: String!
-  ){
-    id
-    solicitud {
-      id
-      supervisor
-    }
-    suministro {
-      id
-      nombre
-    }
-    servicio {
-      id
-      nombre
-    }
-    cantidad
-    comentario
-    tipoOferta
-    tarea
-    descripcionTarea
-    encargadoCliente
-    fechaEjecucion
-    confirmacionRecibido
-    comentarioSupervisor
-    subestadoOferta
-    estadoOferta
-    numeroOferta
-    modalidad
-    precioUnidadProveedor
-    precioTotalProveedor
-    precioUnidadVenta
-    precioTotalVenta
-    precioUnidadCliente
-    precioTotalCliente
-    margen
-    tipoAdquisicion
-    fechaRecibidoCliente
-    fechaDespachoSupervisor
-    fechaDespachoCompras
-    fechaRespuestaCompras
-    fechaEnvioCliente
-    fechaRespuestaCliente
-    tipoRespuestaCliente
-    po
-    fechaPo
-    comentarioAnalista
-    fechaEntregaAlmacen
-    comentarioAlmacenista
-    comentarioCoordinador
-    valorConciliadoCliente
-    fechaConciliadoCliente
-    comentarioFacturador
-    fechaEnvioActaSmu
-    comentarioActa
-    fechaFirmaActaSmu
-    fechaGrSmu
-  }
-}
-'''
-
-'''
-query {
-  oferta(
-    pk: ID!
-    uid: String!
-    credential: String!
-  ){
-    solicitud {
-      id
-      supervisor
-    }
-    suministro {
-      id
-      nombre
-    }
-    servicio {
-      id
-      nombre
-    }
-    cantidad
-    comentario
-    tipoOferta
-    tarea
-    descripcionTarea
-    encargadoCliente
-    fechaEjecucion
-    confirmacionRecibido
-    comentarioSupervisor
-    subestadoOferta
-    estadoOferta
-    usuario
-    numeroOferta
-    modalidad
-    precioUnidadProveedor
-    precioTotalProveedor
-    precioUnidadVenta
-    precioTotalVenta
-    precioUnidadCliente
-    precioTotalCliente
-    margen
-    tipoAdquisicion
-    fechaRecibidoCliente
-    fechaDespachoSupervisor
-    fechaDespachoCompras
-    fechaRespuestaCompras
-    fechaEnvioCliente
-    fechaRespuestaCliente
-    tipoRespuestaCliente
-    po
-    fechaPo
-    comentarioAnalista
-    fechaEntregaAlmacen
-    comentarioAlmacenista
-    comentarioCoordinador
-    valorConciliadoCliente
-    fechaConciliadoCliente
-    comentarioFacturador
-    fechaEnvioActaSmu
-    comentarioActa
-    fechaFirmaActaSmu
-    fechaGrSmu
-  }
-}
-'''
-
-'''
-query {
-  tipoAcceso
-  naturalezaServicio
-  tipoOferta
-  tipoElemento
-  modalidad
-  tipoAdquisicion
-  proveedor
-  tipoRespuestaCliente
-  confirmacionRecibido
-  subestadoOferta
-  estadoOferta
-}
-'''
+    def resolve_tipoElemento(self, info, **kwargs):
+        uid = kwargs.get('uid')
+        credential = kwargs.get('credential')
+        try:
+            token = Token.objects.get(uid=uid)
+            if token.credential != credential:
+                raise GraphQLError('credential invalid')
+        except Token.DoesNotExist:
+            raise GraphQLError('are you login?')
+        return dict(choices.TIPO_ELEMENTO_CHOICES)
 
 # class CreateOferta(graphene.relay.ClientIDMutation):
 #     class Input:
@@ -495,118 +350,6 @@ query {
 #         )
 #         return CreateOferta(oferta=oferta, status=200)
 
-'''
-mutation {
-  createOferta(
-    input: {
-    solicitud: ID
-    suministro: ID
-    servicio: ID
-    cantidad: Int
-    comentario: String
-    tipoOferta: String
-    tarea: String
-    descripcionTarea: String
-    encargadoCliente: String
-    fechaEjecucion: Date
-    confirmacionRecibido: String
-    comentarioSupervisor: String
-    subestadoOferta: String
-    estadoOferta: String
-    usuario: String
-    numeroOferta: String
-    modalidad: String
-    precioUnidadProveedor: Float
-    precioTotalProveedor: Float
-    precioUnidadVenta: Float
-    precioTotalVenta: Float
-    precioUnidadCliente: Float
-    precioTotalCliente: Float
-    margen: Int
-    tipoAdquisicion: String
-    fechaRecibidoCliente: Date
-    fechaDespachoSupervisor: Date
-    fechaDespachoCompras: Date
-    fechaRespuestaCompras: Date
-    fechaEnvioCliente: Date
-    fechaRespuestaCliente: Date
-    tipoRespuestaCliente: String
-    po: String
-    fechaPo: Date
-    comentarioAnalista: String
-    fechaEntregaAlmacen: Date
-    comentarioAlmacenista: String
-    comentarioCoordinador: String
-    valorConciliadoCliente: String
-    fechaConciliadoCliente: Date
-    comentarioFacturador: String
-    fechaEnvioActaSmu: Date
-    comentarioActa: String
-    fechaFirmaActaSmu: Date
-    fechaGrSmu: Date
-    uid: String!
-    credential: String!
-    }
-  ) {
-    oferta {
-      id
-      solicitud {
-        id
-      }
-      suministro {
-        id
-      }
-      servicio {
-        id
-      }
-      cantidad
-      comentario
-      tipoOferta
-      tarea
-      descripcionTarea
-      encargadoCliente
-      fechaEjecucion
-      confirmacionRecibido
-      comentarioSupervisor
-      subestadoOferta
-      estadoOferta
-      usuario
-      numeroOferta
-      modalidad
-      precioUnidadProveedor
-      precioTotalProveedor
-      precioUnidadVenta
-      precioTotalVenta
-      precioUnidadCliente
-      precioTotalCliente
-      margen
-      tipoAdquisicion
-      fechaRecibidoCliente
-      fechaDespachoSupervisor
-      fechaDespachoCompras
-      fechaRespuestaCompras
-      fechaEnvioCliente
-      fechaRespuestaCliente
-      tipoRespuestaCliente
-      po
-      fechaPo
-      comentarioAnalista
-      fechaEntregaAlmacen
-      comentarioAlmacenista
-      comentarioCoordinador
-      valorConciliadoCliente
-      fechaConciliadoCliente
-      comentarioFacturador
-      fechaEnvioActaSmu
-      comentarioActa
-      fechaFirmaActaSmu
-      fechaGrSmu
-    }
-    status
-  }
-}
-'''
-
 class UpdateOferta(graphene.Mutation):
     class Arguments:
         pk = graphene.ID(required=True)
@@ -622,7 +365,6 @@ class UpdateOferta(graphene.Mutation):
         workOrder = graphene.String()
         descripcionTarea = graphene.String()
         encargadoCliente = graphene.String()
-        tipoElemento = graphene.String()
         fechaEjecucion = graphene.types.datetime.Date()
         confirmacionRecibido = graphene.String()
         comentarioSupervisor = graphene.String()
@@ -645,6 +387,7 @@ class UpdateOferta(graphene.Mutation):
         tipoRespuestaClienteNegociada = graphene.String()
         po = graphene.String()
         fechaPo = graphene.types.datetime.Date()
+        valorPo = graphene.Float()
         comentarioAnalista = graphene.String()
         subestadoOferta = graphene.String()
         estadoOferta = graphene.String()
@@ -654,6 +397,7 @@ class UpdateOferta(graphene.Mutation):
         # coordinador lpu/apu
         comentarioCoordinador = graphene.String()
         # facturador
+        tipoElemento = graphene.String()
         valorConciliadoCliente = graphene.Float()
         fechaConciliadoCliente = graphene.types.datetime.Date()
         comentarioFacturador = graphene.String()
@@ -686,7 +430,6 @@ class UpdateOferta(graphene.Mutation):
                 workOrder=None,
                 descripcionTarea=None,
                 encargadoCliente=None,
-                tipoElemento=None,
                 fechaEjecucion=None,
                 confirmacionRecibido=None,
                 comentarioSupervisor=None,
@@ -709,6 +452,7 @@ class UpdateOferta(graphene.Mutation):
                 tipoRespuestaClienteNegociada=None,
                 po=None,
                 fechaPo=None,
+                valorPo=None,
                 comentarioAnalista=None,
                 subestadoOferta=None,
                 estadoOferta=None,
@@ -718,6 +462,7 @@ class UpdateOferta(graphene.Mutation):
                 # coordinador lpu/apu
                 comentarioCoordinador=None,
                 # facturador
+                tipoElemento=None,
                 valorConciliadoCliente=None,
                 fechaConciliadoCliente=None,
                 comentarioFacturador=None,
@@ -753,7 +498,6 @@ class UpdateOferta(graphene.Mutation):
         oferta.work_order = workOrder
         oferta.descripcion_tarea = descripcionTarea
         oferta.encargado_cliente = encargadoCliente
-        oferta.tipo_elemento = tipoElemento
         oferta.fecha_ejecucion = fechaEjecucion
         oferta.confirmacion_recibido = confirmacionRecibido
         oferta.comentario_supervisor = comentarioSupervisor
@@ -776,6 +520,7 @@ class UpdateOferta(graphene.Mutation):
         oferta.tipo_respuesta_cliente_negociada = tipoRespuestaClienteNegociada
         oferta.po = po
         oferta.fecha_po = fechaPo
+        oferta.valor_po = valorPo
         oferta.comentario_analista = comentarioAnalista
         oferta.subestado_oferta = subestadoOferta
         oferta.estado_oferta = estadoOferta
@@ -785,6 +530,7 @@ class UpdateOferta(graphene.Mutation):
         # coordinador lpu/apu
         oferta.comentario_coordinador = comentarioCoordinador
         # facturador
+        oferta.tipo_elemento = tipoElemento
         oferta.valor_conciliado_cliente = valorConciliadoCliente
         oferta.fecha_conciliado_cliente = fechaConciliadoCliente
         oferta.comentario_facturador = comentarioFacturador
@@ -797,116 +543,6 @@ class UpdateOferta(graphene.Mutation):
 
         oferta.save()
         return UpdateOferta(oferta=oferta, status=200)
-
-'''
-mutation {
-  updateOferta(
-    input: {
-    pk: ID!
-    solicitud: ID!
-    suministro: ID
-    servicio: ID
-    cantidad: Int
-    comentario: String
-    tipoOferta: String
-    tarea: String
-    descripcionTarea: String
-    encargadoCliente: String
-    fechaEjecucion: Date
-    confirmacionRecibido: String
-    comentarioSupervisor: String
-    subestadoOferta: String
-    estadoOferta: String
-    usuario: String
-    numeroOferta: String
-    modalidad: String
-    precioUnidadProveedor: Float
-    precioTotalProveedor: Float
-    precioUnidadVenta: Float
-    precioTotalVenta: Float
-    precioUnidadCliente: Float
-    precioTotalCliente: Float
-    tipoAdquisicion: String
-    fechaDespachoSupervisor: Date
-    fechaDespachoCompras: Date
-    fechaRespuestaCompras: Date
-    fechaEnvioCliente: Date
-    fechaRespuestaCliente: Date
-    tipoRespuestaCliente: String
-    po: String
-    fechaPo: Date
-    comentarioAnalista: String
-    fechaEntregaAlmacen: Date
-    comentarioAlmacenista: String
-    comentarioCoordinador: String
-    valorConciliadoCliente: String
-    fechaConciliadoCliente: Date
-    comentarioFacturador: String
-    fechaEnvioActaSmu: Date
-    comentarioActa: String
-    fechaFirmaActaSmu: Date
-    fechaGrSmu: Date
-    uid: String!
-    credential: String!
-    }
-  ) {
-    oferta {
-      id
-      solicitud {
-        id
-      }
-      suministro {
-        id
-      }
-      servicio {
-        id
-      }
-      cantidad
-      comentario
-      tipoOferta
-      tarea
-      descripcionTarea
-      encargadoCliente
-      fechaEjecucion
-      confirmacionRecibido
-      comentarioSupervisor
-      subestadoOferta
-      estadoOferta
-      usuario
-      numeroOferta
-      modalidad
-      precioUnidadProveedor
-      precioTotalProveedor
-      precioUnidadVenta
-      precioTotalVenta
-      precioUnidadCliente
-      precioTotalCliente
-      tipoAdquisicion
-      fechaRecibidoCliente
-      fechaDespachoSupervisor
-      fechaDespachoCompras
-      fechaRespuestaCompras
-      fechaEnvioCliente
-      fechaRespuestaCliente
-      tipoRespuestaCliente
-      po
-      fechaPo
-      comentarioAnalista
-      fechaEntregaAlmacen
-      comentarioAlmacenista
-      comentarioCoordinador
-      valorConciliadoCliente
-      fechaConciliadoCliente
-      comentarioFacturador
-      fechaEnvioActaSmu
-      comentarioActa
-      fechaFirmaActaSmu
-      fechaGrSmu
-    }
-    status
-  }
-}
-'''
 
 class DeleteOferta(graphene.Mutation):
     class Arguments:
@@ -932,21 +568,6 @@ class DeleteOferta(graphene.Mutation):
         oferta = Oferta.objects.get(pk=pk)
         oferta.delete()
         return DeleteOferta(status=200)
-
-'''
-mutation {
-  deleteOferta(
-    pk: ID!
-    uid: String!
-    credential: String!
-  ) {
-    oferta {
-      id
-    }
-    status
-  }
-}
-'''
 
 class OfertaMutation(graphene.ObjectType):
     # create_oferta = CreateOferta.Field()
