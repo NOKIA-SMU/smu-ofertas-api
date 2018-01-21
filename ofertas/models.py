@@ -23,7 +23,7 @@ class Oferta(models.Model):
     semana_recibido_ods = models.PositiveIntegerField(blank=True, null=True, editable=False)
     tipo_oferta = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.TIPO_OFERTA_CHOICES)
-    work_order = models.CharField(max_length=255, blank=True, null=True)
+    work_order = models.CharField(max_length=16, blank=True, null=True)
     descripcion_tarea = models.TextField(blank=True, null=True)
     encargado_cliente = models.CharField(max_length=255, blank=True, null=True)
     fecha_ejecucion = models.DateField(blank=True, null=True)
@@ -31,7 +31,7 @@ class Oferta(models.Model):
                                 choices=choices.CONFIRMACION_RECIBIDO_CHOICES)
     comentario_supervisor = models.TextField(blank=True, null=True)
     # analista
-    numero_oferta = models.CharField(max_length=255, blank=True, null=True)
+    numero_oferta = models.CharField(max_length=15, blank=True, null=True)
     modalidad = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.MODALIDAD_CHOICES)
     precio_unidad_proveedor = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
@@ -45,7 +45,7 @@ class Oferta(models.Model):
                                 choices=choices.TIPO_ADQUISICION_CHOICES)
     proveedor = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.PROVEEDOR_CHOICES)
-    tas_oferta_anterior = models.CharField(max_length=255, blank=True, null=True)
+    tas_oferta_anterior = models.CharField(max_length=15, blank=True, null=True)
     fecha_despacho_supervisor = models.DateField(auto_now_add=True, blank=True, null=True)
     semana_despacho_supervisor = models.PositiveIntegerField(blank=True, null=True, editable=False)
     fecha_despacho_compras = models.DateField(blank=True, null=True)

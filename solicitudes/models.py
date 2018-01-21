@@ -8,7 +8,7 @@ class Solicitud(models.Model):
     supervisor = models.CharField(max_length=255, blank=True, null=True)
     analista_id = models.CharField(max_length=255, blank=True, null=True)
     analista = models.CharField(max_length=255, blank=True, null=True)
-    tas = models.CharField(max_length=255, blank=True, null=True)
+    tas = models.CharField(max_length=15, blank=True, null=True)
     estacion = models.ForeignKey(Estacion, on_delete=models.CASCADE,
                                     blank=True, null=True, related_name='solicitudes')
     subsistema = models.ForeignKey(Subsistema, on_delete=models.CASCADE,
