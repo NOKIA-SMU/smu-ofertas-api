@@ -12,6 +12,7 @@ class Oferta(models.Model):
                                         blank=True, null=True)
     orden_servicio = models.OneToOneField(OrdenServicio, on_delete=models.CASCADE,
                                         blank=True, null=True)
+    id_solicitud = models.PositiveIntegerField(blank=True, null=True, editable=False)
     tipo_sitio = models.CharField(max_length=255, blank=True, null=True,
                                 choices=choices.TIPO_SITIO_CHOICES)
     tipo_acceso = models.CharField(max_length=255, blank=True, null=True,
@@ -139,21 +140,21 @@ class Oferta(models.Model):
     @receiver(post_save, sender=OrdenSuministro)
     def create_oferta_suministro(sender, instance, created, **kwargs):
         if created and instance.solicitud.estado_solicitud:
-            oferta, new = Oferta.objects.get_or_create(orden_suministro=instance)
+            oferta, new = Oferta.objects.get_or_create(orden_suministro=instance, id_solicitud=instance.solicitud.id)
 
     @receiver(post_save, sender=OrdenSuministro)
     def save_oferta_suministro(sender, instance, **kwargs):
         if instance.solicitud.estado_solicitud:
-            oferta, new = Oferta.objects.get_or_create(orden_suministro=instance)
+            oferta, new = Oferta.objects.get_or_create(orden_suministro=instance, id_solicitud=instance.solicitud.id)
             instance.oferta.save()
 
     @receiver(post_save, sender=OrdenServicio)
     def create_oferta_servicio(sender, instance, created, **kwargs):
         if created and instance.solicitud.estado_solicitud:
-            oferta, new = Oferta.objects.get_or_create(orden_servicio=instance)
+            oferta, new = Oferta.objects.get_or_create(orden_servicio=instance, id_solicitud=instance.solicitud.id)
 
     @receiver(post_save, sender=OrdenServicio)
     def save_oferta_servicio(sender, instance, **kwargs):
         if instance.solicitud.estado_solicitud:
-            oferta, new = Oferta.objects.get_or_create(orden_servicio=instance)
+            oferta, new = Oferta.objects.get_or_create(orden_servicio=instance, id_solicitud=instance.solicitud.id)
             instance.oferta.save()

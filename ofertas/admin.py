@@ -12,6 +12,7 @@ class OfertaAdmin(ImportExportModelAdmin):
     # supervisor
     'orden_suministro',
     'orden_servicio',
+    'id_solicitud',
     'tipo_sitio',
     'tipo_acceso',
     'naturaleza_servicio',
