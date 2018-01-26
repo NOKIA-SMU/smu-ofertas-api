@@ -145,7 +145,8 @@ class Oferta(models.Model):
     @receiver(post_save, sender=OrdenSuministro)
     def save_oferta_suministro(sender, instance, **kwargs):
         if instance.solicitud.estado_solicitud:
-            oferta, new = Oferta.objects.get_or_create(orden_suministro=instance, id_solicitud=instance.solicitud.id)
+            oferta, new = Oferta.objects.get_or_create(orden_suministro=instance)
+            instance.oferta.id_solicitud = instance.solicitud.id
             instance.oferta.save()
 
     @receiver(post_save, sender=OrdenServicio)
@@ -156,5 +157,6 @@ class Oferta(models.Model):
     @receiver(post_save, sender=OrdenServicio)
     def save_oferta_servicio(sender, instance, **kwargs):
         if instance.solicitud.estado_solicitud:
-            oferta, new = Oferta.objects.get_or_create(orden_servicio=instance, id_solicitud=instance.solicitud.id)
+            oferta, new = Oferta.objects.get_or_create(orden_servicio=instance)
+            instance.oferta.id_solicitud = instance.solicitud.id
             instance.oferta.save()
