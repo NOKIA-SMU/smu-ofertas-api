@@ -23,7 +23,7 @@ class Solicitud(models.Model):
     actualizado = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ('creado',)
+        ordering = ('-creado',)
         verbose_name = 'solicitud'
         verbose_name_plural = 'solicitudes'
 

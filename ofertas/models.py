@@ -97,7 +97,7 @@ class Oferta(models.Model):
     actualizado = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ('creado',)
+        ordering = ('-creado',)
         verbose_name = 'oferta'
         verbose_name_plural = 'ofertas'
 
