@@ -8,7 +8,22 @@ class OfertaResource(resources.ModelResource):
 
     class Meta:
         model = Oferta
-        exclude = ( 'creado', 'actualizado', )
+        exclude = (
+        'semana_recibido_ods',
+        'precio_total_proveedor',
+        'precio_total_venta',
+        'precio_total_cliente',
+        'margen',
+        'semana_despacho_supervisor',
+        'semana_despacho_compras',
+        'semana_respuesta_compras',
+        'semana_envio_oferta_cliente',
+        'semana_envio_oferta_cliente_negociada',
+        'semana_respuesta_cliente',
+        'semana_respuesta_cliente_negociada',
+        'estado',
+        'creado',
+        'actualizado',)
         # export_order = (
         # 'id',
         # )
