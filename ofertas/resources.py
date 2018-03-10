@@ -1,7 +1,13 @@
-from import_export import resources
+from import_export import resources, fields
 from .models import Oferta
 
 class OfertaResource(resources.ModelResource):
+    suministro = fields.Field(
+        column_name='suministro',
+        attribute='orden_suministro__suministro__codigo_mm',)
+    servicio = fields.Field(
+        column_name='servicio',
+        attribute='orden_servicio__servicio__codigo_lpu',)
 
     def for_delete(self, row, instance):
         return self.fields['subestado'].clean(row)

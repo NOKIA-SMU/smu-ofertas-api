@@ -1,9 +1,12 @@
 from django.contrib import admin
 
 from .models import OrdenSuministro, OrdenServicio
+from import_export.admin import ImportExportModelAdmin
+from .resources import OrdenSuministroResource, OrdenServicioResource
 
 @admin.register(OrdenSuministro)
-class OrdenSuministroAdmin(admin.ModelAdmin):
+class OrdenSuministroAdmin(ImportExportModelAdmin):
+    resource_class = OrdenSuministroResource
     list_display = (
     'id',
     'solicitud',
@@ -23,7 +26,8 @@ class OrdenSuministroAdmin(admin.ModelAdmin):
     ]
 
 @admin.register(OrdenServicio)
-class OrdenServicioAdmin(admin.ModelAdmin):
+class OrdenServicioAdmin(ImportExportModelAdmin):
+    resource_class = OrdenServicioResource
     list_display = (
     'id',
     'solicitud',
