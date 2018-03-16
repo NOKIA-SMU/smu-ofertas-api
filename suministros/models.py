@@ -3,13 +3,12 @@ from subsistemas.models import Subsistema
 
 class Suministro(models.Model):
     codigo_lpu = models.CharField(max_length=255)
-    codigo_mm = models.CharField(max_length=255, unique=True)
+    codigo_mm = models.CharField(max_length=255)
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField(blank=True, null=True)
     marca = models.CharField(max_length=255, blank=True, null=True)
     referencia = models.CharField(max_length=255, blank=True, null=True)
-    subsistema = models.ForeignKey(Subsistema, on_delete=models.CASCADE,
-                                    blank=True, null=True, related_name='suministros')
+    subsistema = models.ForeignKey(Subsistema, on_delete=models.CASCADE, related_name='suministros')
     unidad = models.CharField(max_length=255, blank=True, null=True)
     valor_lpu = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     descripcion_lpu = models.TextField(blank=True, null=True)
@@ -23,6 +22,8 @@ class Suministro(models.Model):
         ordering = ('creado',)
         verbose_name = 'suministro'
         verbose_name_plural = 'suministros'
+        unique_together = ('subsistema', 'codigo_mm')
+
 
     def __str__(self):
         return self.nombre
