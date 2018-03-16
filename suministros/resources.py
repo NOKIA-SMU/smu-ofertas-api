@@ -1,7 +1,10 @@
-from import_export import resources
+from import_export import resources, fields
 from .models import Suministro
 
 class SuministroResource(resources.ModelResource):
+    subsistema = fields.Field(
+        column_name='subsistema',
+        attribute='subsistema__nombre',)
 
     def for_delete(self, row, instance):
         return self.fields['subestado'].clean(row)
