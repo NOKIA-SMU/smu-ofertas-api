@@ -9,7 +9,6 @@ class OrdenSuministroResource(resources.ModelResource):
     class Meta:
         model = OrdenSuministro
         exclude = (
-        'estado',
         'creado',
         'actualizado',)
         # export_order = (
@@ -24,7 +23,6 @@ class OrdenServicioResource(resources.ModelResource):
     class Meta:
         model = OrdenServicio
         exclude = (
-        'estado',
         'creado',
         'actualizado',)
         # export_order = (

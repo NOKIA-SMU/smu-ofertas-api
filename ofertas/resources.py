@@ -27,7 +27,6 @@ class OfertaResource(resources.ModelResource):
         'semana_envio_oferta_cliente_negociada',
         'semana_respuesta_cliente',
         'semana_respuesta_cliente_negociada',
-        'estado',
         'creado',
         'actualizado',)
         # export_order = (

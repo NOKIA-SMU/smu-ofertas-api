@@ -22,9 +22,17 @@ class SolicitudResource(resources.ModelResource):
         exclude = (
         'supervisor_id',
         'analista_id',
-        'estado',
         'creado',
         'actualizado',)
-        # export_order = (
-        # 'id',
-        # )
+        export_order = (
+        'id',
+        'supervisor',
+        'analista',
+        'tas',
+        'estacion',
+        'subsistema',
+        'prioridad',
+        'estado_solicitud',
+        'estado',
+        'subestado',
+        )
