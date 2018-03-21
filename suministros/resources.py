@@ -1,10 +1,13 @@
 from import_export import resources, fields
+from import_export.widgets import ForeignKeyWidget
+from subsistemas.models import Subsistema
 from .models import Suministro
 
 class SuministroResource(resources.ModelResource):
     subsistema = fields.Field(
         column_name='subsistema',
-        attribute='subsistema__nombre',)
+        attribute='subsistema',
+        widget=ForeignKeyWidget(Subsistema, 'nombre'))
 
     def for_delete(self, row, instance):
         return self.fields['subestado'].clean(row)
