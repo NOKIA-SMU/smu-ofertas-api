@@ -3,6 +3,7 @@ from subsistemas.models import Subsistema
 
 class Servicio(models.Model):
     codigo_lpu = models.CharField(max_length=255)
+    codigo_mm = models.CharField(max_length=255, blank=True, null=True)
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField(blank=True, null=True)
     distancia = models.CharField(max_length=255, blank=True, null=True)

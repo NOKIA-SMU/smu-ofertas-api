@@ -105,6 +105,10 @@ class Oferta(models.Model):
         return str(self.id)
 
     def save(self, *args, **kwargs):
+        if self.orden_suministro is not None:
+            self.numero_oferta = self.orden_suministro.solicitud.tas
+        if self.orden_servicio is not None:
+            self.numero_oferta = self.orden_servicio.solicitud.tas
         if self.fecha_recibido_ods is not None:
             self.semana_recibido_ods = self.fecha_recibido_ods.isocalendar()[1]
         if self.fecha_despacho_supervisor is not None:
